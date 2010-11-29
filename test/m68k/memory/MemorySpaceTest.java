@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MemorySpaceTests extends TestCase
+public class MemorySpaceTest extends TestCase
 {
 	public void testCreate()
 	{

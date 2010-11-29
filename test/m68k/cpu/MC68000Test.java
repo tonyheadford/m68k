@@ -28,7 +28,7 @@ import m68k.memory.MemorySpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MC68000Tests extends TestCase
+public class MC68000Test extends TestCase
 {
 	MemoryBus bus;
 	Cpu cpu;

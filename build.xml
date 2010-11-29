@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="${module.name}" default="package" basedir=".">
+  <property file="build.properties"/>
+	<property name="build.dir" location="build"/>
+    <property name="build.prod.dir" location="${build.dir}/production"/>
+    <property name="build.test.dir" location="${build.dir}/test"/>
+	<property name="src.dir" location="src"/>
+    <property name="test.dir" location="test"/>
+    <property name="module.jar.file" value="${module.name}.jar"/>
+
+	<!-- Manifest options -->
+	<property name="manifest.package" value="m68k"/>
+	<property name="manifest.title" value="${module.title}"/>
+	<property name="manifest.vendor" value="${module.vendor}"/>
+
+    <property name="lib.dir" value="lib"/>
+
+	<path id="project.classpath">
+        <pathelement location="${build.prod.dir}" />
+        <pathelement location="${build.test.dir}" />
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+	</path>
+
+    <target name="create.build.dir" description="Create build area">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.prod.dir}"/>
+        <mkdir dir="${build.prod.dir}/META-INF"/>
+        <mkdir dir="${build.test.dir}"/>
+    </target>
+
+    <target name="compile" depends="compile.prod,compile.tests" description="Compile production and test code"/>
+
+	<target name="compile.prod" depends="create.build.dir" description="Compile production code">
+		<javac srcdir="${src.dir}" destdir="${build.prod.dir}" nowarn="${compiler.nowarn}" deprecation="${compiler.deprecation}"
+				optimize="${compiler.optimize}" debug="${compiler.debug}" memoryMaximumSize="${compiler.max.memory}">
+			<classpath refid="project.classpath"/>
+		</javac>
+	</target>
+
+    <target name="compile.tests" depends="compile.prod" description="Compile test code">
+        <javac srcdir="${test.dir}" destdir="${build.test.dir}" nowarn="${compiler.nowarn}" deprecation="${compiler.deprecation}"
+                optimize="${compiler.optimize}" debug="${compiler.debug}" memoryMaximumSize="${compiler.max.memory}">
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile.tests" description="Run unit tests">
+        <junit haltonfailure="true">
+            <classpath refid="project.classpath"/>
+            <formatter type="brief" usefile="false"/>
+            <batchtest>
+                <fileset dir="${build.test.dir}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+    </target>
+
+	<target name="package" depends="test" description="Build jar file">
+		<manifest file="${build.prod.dir}/META-INF/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}"/>
+			<section name="${module.name}">
+				<attribute name="Implemention-Title" value="${module.title}"/>
+				<attribute name="Implemention-Version" value="${module.version}"/>
+				<attribute name="Implemention-Vendor" value="${module.vendor}"/>
+			</section>
+		</manifest>
+		<jar destfile="${module.jar.file}" manifest="${build.prod.dir}/META-INF/MANIFEST.MF" compress="${compress}">
+			<fileset dir="${build.prod.dir}">
+                <excludesfile name="${build.prod.dir}/META-INF/MANIFEST.MF"/>
+            </fileset>
+		</jar>
+	</target>
+	<target name="clean" description="cleanup">
+		<delete dir="${build.dir}"/>
+        <delete file="${module.jar.file}"/>
+	</target>
+
+	<target name="all" depends="clean, package" description="build all"/>
+
+</project>

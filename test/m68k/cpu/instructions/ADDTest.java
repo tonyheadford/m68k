@@ -30,7 +30,7 @@ import m68k.memory.MemorySpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class ADDTests extends TestCase
+public class ADDTest extends TestCase
 {
 	MemoryBus bus;
 	Cpu cpu;
