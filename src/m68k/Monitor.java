@@ -53,7 +53,28 @@ public class Monitor implements Runnable
 
 	public static void main(String[] args)
 	{
-		MemoryBus bus = new MemorySpace(512);	// 512kb of memory
+		//TODO: commandline args could be expanded in future to include CPU type etc.
+
+		int mem_size = 512;	// 512kb of memory default
+
+		if(args.length == 1)
+		{
+			// initial memory size
+			try
+			{
+				mem_size = Integer.parseInt(args[0]);
+			}
+			catch(NumberFormatException e)
+			{
+				System.err.println("Invalid number: " + args[0]);
+				System.out.println("Usage: m68k.Monitor [memory size Kb]");
+				System.exit(-1);
+			}
+		}
+
+		System.out.println("m68k Monitor v0.1 - Copyright 2008-2010 Tony Headford");
+
+		MemoryBus bus = new MemorySpace(mem_size);
 		Cpu cpu = new MC68000(bus);
 
 		Monitor monitor = new Monitor(cpu,bus);
@@ -73,11 +94,10 @@ public class Monitor implements Runnable
 			writer = new PrintWriter(System.out);
 			reader = new BufferedReader(new InputStreamReader(System.in));
 		}
-		
+
 		running = true;
 		while(running)
 		{
-			dumpInfo();
 			try
 			{
 				writer.print("> ");
@@ -94,67 +114,82 @@ public class Monitor implements Runnable
 	protected void handleCommand(String line)
 	{
 		String[] tokens = line.split(" ");
-		String cmd = tokens[0].toLowerCase();
+		String cmd = tokens[0].trim().toLowerCase();
 
-		if(cmd.equals("q"))
+		if(cmd.length() > 0)
 		{
-			running = false;
-		}
-		else if(cmd.equals("pc"))
-		{
-			handlePC(tokens);
-		}
-		else if(cmd.equals("d"))
-		{
-			handleDisassemble(tokens);
-		}
-		else if(cmd.startsWith("d"))
-		{
-			handleDataRegs(tokens);
-		}
-		else if(cmd.startsWith("a"))
-		{
-			handleAddrRegs(tokens);
-		}
-		else if(cmd.equals("sr"))
-		{
-			handleSR(tokens);
-		}
-		else if(cmd.startsWith("ccr"))
-		{
-			handleCCR(tokens);
-		}
-//		else if(cmd.startsWith("usp"))
-//		{
-//			handleUSP(tokens);
-//		}
-//		else if(cmd.startsWith("ssp"))
-//		{
-//			handleSSP(tokens);
-//		}
-		else if(cmd.equals("ml"))
-		{
-			handleMemLong(tokens);
-		}
-		else if(cmd.equals("mw"))
-		{
-			handleMemWord(tokens);
-		}
-		else if(cmd.equals("mb"))
-		{
-			handleMemByte(tokens);
-		}
-		else if(cmd.equals("m"))
-		{
-			handleMemDump(tokens);
-		}
-		else if(cmd.equals("s"))
-		{
-			handleStep(tokens);
-		}
-		else if(cmd.equals("load"))
-		{
-			handleLoad(tokens);
+			if(cmd.equals("q"))
+			{
+				running = false;
+			}
+			else if(cmd.equals("r"))
+			{
+				dumpInfo();
+			}
+			else if(cmd.equals("pc"))
+			{
+				handlePC(tokens);
+			}
+			else if(cmd.equals("d"))
+			{
+				handleDisassemble(tokens);
+			}
+			else if(cmd.startsWith("d"))
+			{
+				handleDataRegs(tokens);
+			}
+			else if(cmd.startsWith("a"))
+			{
+				handleAddrRegs(tokens);
+			}
+			else if(cmd.equals("sr"))
+			{
+				handleSR(tokens);
+			}
+			else if(cmd.startsWith("ccr"))
+			{
+				handleCCR(tokens);
+			}
+			else if(cmd.startsWith("usp"))
+			{
+				handleUSP(tokens);
+			}
+			else if(cmd.startsWith("ssp"))
+			{
+				handleSSP(tokens);
+			}
+			else if(cmd.equals("ml"))
+			{
+				handleMemLong(tokens);
+			}
+			else if(cmd.equals("mw"))
+			{
+				handleMemWord(tokens);
+			}
+			else if(cmd.equals("mb"))
+			{
+				handleMemByte(tokens);
+			}
+			else if(cmd.equals("m"))
+			{
+				handleMemDump(tokens);
+			}
+			else if(cmd.equals("s"))
+			{
+				handleStep(tokens);
+			}
+			else if(cmd.equals("load"))
+			{
+				handleLoad(tokens);
+			}
+			else if(cmd.equals("?") || cmd.equals("h") || cmd.equals("help"))
+			{
+				showHelp(tokens);
+			}
+			else
+			{
+				writer.println("Unknown command: " + tokens[0]);
+			}
 		}
 	}
 
@@ -244,21 +279,32 @@ public class Monitor implements Runnable
 			return;
 		}
 		String address = tokens[1];
+		int size = bus.size();
 		try
 		{
 			int addr = parseInt(address);
+			if(addr < 0 || addr >= size)
+			{
+				writer.println("Address out of range");
+				return;
+			}
 			StringBuilder sb = new StringBuilder(80);
 			StringBuilder asc = new StringBuilder(16);
 
-			for(int y = 0; y < 8; y++)
+			for(int y = 0; y < 8 && addr < size; y++)
 			{
 				sb.append(String.format("%08x", addr)).append("  ");
-				for(int x = 0; x < 16; x++)
+				for(int x = 0; x < 16 && addr < size; x++)
 				{
 					int b = cpu.readMemoryByte(addr);
 					sb.append(String.format("%02x ", b));
 					asc.append(getPrintable(b));
 					addr++;
+				}
+				if(sb.length() < 48)
+				{
+					for(int n = sb.length(); n < 48; n++)
+						sb.append(" ");
 				}
 				sb.append("    ").append(asc);
 				writer.println(sb.toString());
@@ -353,17 +399,24 @@ public class Monitor implements Runnable
 
 		buffer.delete(0, buffer.length());
 		int addr = cpu.getPC();
-		int opcode = cpu.readMemoryWord(addr);
-
-		Instruction i = cpu.getInstructionFor(opcode);
-		DisassembledInstruction di = i.disassemble(addr, opcode);
-		if(showBytes)
+		if(addr < 0 || addr >= bus.size())
 		{
-			di.formatInstruction(buffer);
+			buffer.append(String.format("%08x   ????", addr));
 		}
 		else
 		{
-			di.shortFormat(buffer);
+			int opcode = cpu.readMemoryWord(addr);
+
+			Instruction i = cpu.getInstructionFor(opcode);
+			DisassembledInstruction di = i.disassemble(addr, opcode);
+			if(showBytes)
+			{
+				di.formatInstruction(buffer);
+			}
+			else
+			{
+				di.shortFormat(buffer);
+			}
 		}
 
 		writer.printf("==> %s\n\n", buffer.toString());
@@ -501,6 +554,60 @@ public class Monitor implements Runnable
 		}
 	}
 
+	protected void handleUSP(String[] tokens)
+	{
+		if(tokens.length == 1)
+		{
+			writer.printf("USP: %08x\n", cpu.getUSP());
+		}
+		else if(tokens.length == 2)
+		{
+			//set a value
+			int value;
+			try
+			{
+				value = parseInt(tokens[1]);
+			}
+			catch(NumberFormatException e)
+			{
+				writer.println("Bad value [" + tokens[1] + "]");
+				return;
+			}
+			cpu.setUSP(value);
+		}
+		else
+		{
+			writer.println("usage: " + tokens[0] + " [value]");
+		}
+	}
+
+	protected void handleSSP(String[] tokens)
+	{
+		if(tokens.length == 1)
+		{
+			writer.printf("SSP: %08x\n", cpu.getSSP());
+		}
+		else if(tokens.length == 2)
+		{
+			//set a value
+			int value;
+			try
+			{
+				value = parseInt(tokens[1]);
+			}
+			catch(NumberFormatException e)
+			{
+				writer.println("Bad value [" + tokens[1] + "]");
+				return;
+			}
+			cpu.setSSP(value);
+		}
+		else
+		{
+			writer.println("usage: " + tokens[0] + " [value]");
+		}
+	}
+
 	protected void handleMemLong(String[] tokens)
 	{
 		if(tokens.length != 2 && tokens.length != 3)
@@ -517,6 +624,11 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+						return;
+					}
 					writer.printf("%08x  %08x\n", addr, cpu.readMemoryLong(addr));
 				}
 				catch(NumberFormatException e)
@@ -531,6 +643,11 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+						return;
+					}
 					int v = parseInt(value);
 					cpu.writeMemoryLong(addr, v);
 				}
@@ -558,6 +675,11 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+						return;
+					}
 					writer.printf("%08x  %04x\n", addr, cpu.readMemoryWord(addr));
 				}
 				catch(NumberFormatException e)
@@ -572,6 +694,11 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+						return;
+					}
 					int v = parseInt(value);
 					cpu.writeMemoryWord(addr, v);
 				}
@@ -598,7 +725,14 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					writer.printf("%08x  %02x\n", addr, cpu.readMemoryByte(addr));
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+					}
+					else
+					{
+						writer.printf("%08x  %02x\n", addr, cpu.readMemoryByte(addr));
+					}
 				}
 				catch(NumberFormatException e)
 				{
@@ -612,6 +746,11 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
+					if(addr < 0 || addr >= bus.size())
+					{
+						writer.println("Address out of range");
+						return;
+					}
 					int v = parseInt(value);
 					cpu.writeMemoryByte(addr, v);
 				}
@@ -650,7 +789,7 @@ public class Monitor implements Runnable
 			return;
 		}
 
-		if(address + (int)f.length() > bus.size())
+		if(address + (int)f.length() >= bus.size())
 		{
 			//need larger memory
 			writer.println("Need larger memory to load this file at " + tokens[1]);
@@ -673,5 +812,36 @@ public class Monitor implements Runnable
 		{
 			e.printStackTrace();
 		}
+	}
+
+	protected void showHelp(String[] tokens)
+	{
+		writer.println("Command Help:");
+		writer.println("Addresses and values can be specified in hexadecimal by preceeding the value with '$'");
+		writer.println("      eg. d0 $deadbeef  - Set register d0 to 0xDEADBEEF");
+		writer.println("          m $10         - Memory dump starting at 0x10 (16 in decimal)");
+		writer.println("          pc 10         - Set the PC register to 10 (0x0A in hexadecimal)");
+		writer.println("General:");
+		writer.println("  ?,h,help              - Show this help.");
+		writer.println("  q                     - Quit.");
+		writer.println("Registers:");
+		writer.println("  r                     - Display all registers");
+		writer.println("  d[0-9] [value]        - Set or view a data register");
+		writer.println("  a[0-9] [value]        - Set or view an address register");
+		writer.println("  pc [value]            - Set or view the PC register");
+		writer.println("  sr [value]            - Set or view the SR register");
+		writer.println("  ccr [value]           - Set or view the CCR register");
+		writer.println("  usp [value]           - Set or view the USP register");
+		writer.println("  ssp [value]           - Set or view the SSP register");
+		writer.println("Memory:");
+		writer.println("  m <address>           - View (128 byte) memory dump starting at the specified address");
+		writer.println("  mb <address> [value]  - Set or view a byte (8-bit) value at the specified address");
+		writer.println("  mw <address> [value]  - Set or view a word (16-bit) value at the specified address");
+		writer.println("  ml <address> [value]  - Set or view a long (32-bit) value at the specified address");
+		writer.println("  load <address> <file> - Load <file> into memory starting at <address>");
+		writer.println("Execution & Disassembly:");
+		writer.println("  s                     - Execute the instruction at the PC register");
+		writer.println("  d <address> [count]   - Disassemble the memory starting at <address> for an optional");
+		writer.println("                          <count> instructions. Default is 8 instructions.");
 	}
 }
