@@ -26,13 +26,29 @@ import java.nio.ByteBuffer;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MemorySpace implements MemoryBus
+public class MemorySpace implements AddressSpace
 {
 	private ByteBuffer buffer;
+	private int size;
 
 	public MemorySpace(int sizeKb)
 	{
-		buffer = ByteBuffer.allocateDirect(sizeKb * 1024);
+		size = sizeKb * 1024;
+		buffer = ByteBuffer.allocateDirect(size);
+	}
+
+	public void reset()
+	{
+	}
+
+	public int getStartAddress()
+	{
+		return 0;
+	}
+
+	public int getEndAddress()
+	{
+		return size;
 	}
 
 	public int readByte(int addr)
@@ -67,8 +83,43 @@ public class MemorySpace implements MemoryBus
 		buffer.putInt(addr, value);
 	}
 
+	public int internalReadByte(int addr)
+	{
+		return readByte(addr);
+	}
+
+	@Override
+	public int internalReadWord(int addr)
+	{
+		return readWord(addr);
+	}
+
+	@Override
+	public int internalReadLong(int addr)
+	{
+		return readLong(addr);
+	}
+
+	@Override
+	public void internalWriteByte(int addr, int value)
+	{
+		writeByte(addr, value);
+	}
+
+	@Override
+	public void internalWriteWord(int addr, int value)
+	{
+		writeWord(addr, value);
+	}
+
+	@Override
+	public void internalWriteLong(int addr, int value)
+	{
+		writeLong(addr, value);
+	}
+
 	public int size()
 	{
-		return buffer.capacity();
+		return size;
 	}
 }

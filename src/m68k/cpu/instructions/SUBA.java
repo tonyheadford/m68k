@@ -91,10 +91,9 @@ public class SUBA implements InstructionHandler
 	protected final int suba_word(int opcode)
 	{
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
-		// should this be sign extended ?
-		int s = src.getWord();
+		int s = src.getWordSigned();
 		int reg = (opcode >> 9) & 0x07;
-		int d = cpu.getAddrRegisterWord(reg);
+		int d = cpu.getAddrRegisterLong(reg);
 		int r = d - s;
 		cpu.setAddrRegisterLong(reg, r);
 

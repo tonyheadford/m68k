@@ -24,8 +24,12 @@ package m68k.memory;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public interface MemoryBus
+public interface AddressSpace
 {
+	public void reset();
+	public int getStartAddress();
+	public int getEndAddress();
+
 	public int readByte(int addr);
 	public int readWord(int addr);
 	public int readLong(int addr);
@@ -33,6 +37,14 @@ public interface MemoryBus
 	public void writeByte(int addr, int value);
 	public void writeWord(int addr, int value);
 	public void writeLong(int addr, int value);
+
+	public int internalReadByte(int addr);
+	public int internalReadWord(int addr);
+	public int internalReadLong(int addr);
+
+	public void internalWriteByte(int addr, int value);
+	public void internalWriteWord(int addr, int value);
+	public void internalWriteLong(int addr, int value);
 
 	public int size();
 }

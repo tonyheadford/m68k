@@ -95,9 +95,10 @@ public class DBcc implements InstructionHandler
 		int cc = (opcode >> 8) & 0x0f;
 		int dis = cpu.readMemoryWordSigned(address + 2);
 
+		DisassembledOperand reg = new DisassembledOperand(String.format("d%d", (opcode & 0x07)));
 		//word displacement
-		DisassembledOperand op = new DisassembledOperand(String.format("$%08x", dis + address + 2), 2, dis);
+		DisassembledOperand where = new DisassembledOperand(String.format("$%08x", dis + address + 2), 2, dis);
 
-		return new DisassembledInstruction(address, opcode, names[cc], op);
+		return new DisassembledInstruction(address, opcode, names[cc], reg, where);
 	}
 }

@@ -4,10 +4,11 @@ import m68k.cpu.Cpu;
 import m68k.cpu.DisassembledInstruction;
 import m68k.cpu.Instruction;
 import m68k.cpu.MC68000;
-import m68k.memory.MemoryBus;
+import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 
 import java.io.*;
+import java.util.ArrayList;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -36,19 +37,23 @@ import java.io.*;
 public class Monitor implements Runnable
 {
 	private final Cpu cpu;
-	private final MemoryBus bus;
+	private final AddressSpace memory;
 	private boolean running;
 	private StringBuilder buffer;
-	BufferedReader reader;
-	PrintWriter writer;
-	boolean showBytes;
+	private BufferedReader reader;
+	private PrintWriter writer;
+	private boolean showBytes;
+	private boolean autoRegs;
+	private ArrayList<Integer> breakpoints;
 
-	public Monitor(Cpu cpu, MemoryBus bus)
+	public Monitor(Cpu cpu, AddressSpace memory)
 	{
 		this.cpu = cpu;
-		this.bus = bus;
+		this.memory = memory;
 		buffer = new StringBuilder(128);
 		showBytes = false;
+		autoRegs = false;
+		breakpoints = new ArrayList<Integer>();
 	}
 
 	public static void main(String[] args)
@@ -74,10 +79,10 @@ public class Monitor implements Runnable
 
 		System.out.println("m68k Monitor v0.1 - Copyright 2008-2010 Tony Headford");
 
-		MemoryBus bus = new MemorySpace(mem_size);
-		Cpu cpu = new MC68000(bus);
+		AddressSpace memory = new MemorySpace(mem_size);
+		Cpu cpu = new MC68000(memory);
 
-		Monitor monitor = new Monitor(cpu,bus);
+		Monitor monitor = new Monitor(cpu,memory);
 		monitor.run();
 	}
 
@@ -103,6 +108,11 @@ public class Monitor implements Runnable
 				writer.print("> ");
 				writer.flush();
 				handleCommand(reader.readLine());
+
+				if(autoRegs)
+				{
+					dumpInfo();
+				}
 			}
 			catch(IOException e)
 			{
@@ -134,27 +144,23 @@ public class Monitor implements Runnable
 			{
 				handleDisassemble(tokens);
 			}
-			else if(cmd.startsWith("d"))
+			else if(cmd.equals("b"))
 			{
-				handleDataRegs(tokens);
-			}
-			else if(cmd.startsWith("a"))
-			{
-				handleAddrRegs(tokens);
+				handleBreakPoints(tokens);
 			}
 			else if(cmd.equals("sr"))
 			{
 				handleSR(tokens);
 			}
-			else if(cmd.startsWith("ccr"))
+			else if(cmd.equals("ccr"))
 			{
 				handleCCR(tokens);
 			}
-			else if(cmd.startsWith("usp"))
+			else if(cmd.equals("usp"))
 			{
 				handleUSP(tokens);
 			}
-			else if(cmd.startsWith("ssp"))
+			else if(cmd.equals("ssp"))
 			{
 				handleSSP(tokens);
 			}
@@ -178,9 +184,29 @@ public class Monitor implements Runnable
 			{
 				handleStep(tokens);
 			}
+			else if(cmd.equals("g"))
+			{
+				handleGo(tokens);
+			}
+			else if(cmd.equals("autoregs"))
+			{
+				handleAutoRegs(tokens);
+			}
+			else if(cmd.equals("showbytes"))
+			{
+				handleShowBytes(tokens);
+			}
 			else if(cmd.equals("load"))
 			{
 				handleLoad(tokens);
+			}
+			else if(cmd.startsWith("d"))
+			{
+				handleDataRegs(tokens);
+			}
+			else if(cmd.startsWith("a"))
+			{
+				handleAddrRegs(tokens);
 			}
 			else if(cmd.equals("?") || cmd.equals("h") || cmd.equals("help"))
 			{
@@ -192,6 +218,97 @@ public class Monitor implements Runnable
 			}
 		}
 	}
+
+	protected void handleGo(String[] tokens)
+	{
+		int count = 0;
+		boolean going = true;
+
+		while(running && going)
+		{
+			try
+			{
+				int time = cpu.execute();
+				count += time;
+				int addr = cpu.getPC();
+				if(breakpoints.contains(addr))
+				{
+					//time to stop
+					writer.println("BREAKPOINT");
+					going = false;
+				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				going = false;
+			}
+
+		}
+		writer.printf("[Consumed %d ticks]\n", count);
+	}
+
+	protected void handleBreakPoints(String[] tokens)
+	{
+		if(tokens.length > 1)
+		{
+			// add or remove toggle
+			try
+			{
+				int addr = parseInt(tokens[1]);
+				if(breakpoints.contains(addr))
+					breakpoints.remove(new Integer(addr));
+				else
+					breakpoints.add(addr);
+			}
+			catch(NumberFormatException e)
+			{
+				return;
+			}
+		}
+
+		//list breakpoints
+		writer.println("Breakpoints:");
+		for(int bp : breakpoints)
+		{
+			writer.println(String.format("$%x", bp));
+		}
+	}
+
+	protected void handleAutoRegs(String[] tokens)
+	{
+		if(tokens.length > 1)
+		{
+			if(tokens[1].equalsIgnoreCase("on"))
+			{
+				autoRegs = true;
+			}
+			else if(tokens[1].equalsIgnoreCase("off"))
+			{
+				autoRegs = false;
+			}
+		}
+
+		writer.println("autoregs is " + (autoRegs ? "on" : "off"));
+	}
+
+	protected void handleShowBytes(String[] tokens)
+	{
+		if(tokens.length > 1)
+		{
+			if(tokens[1].equalsIgnoreCase("on"))
+			{
+				showBytes = true;
+			}
+			else if(tokens[1].equalsIgnoreCase("off"))
+			{
+				showBytes = false;
+			}
+		}
+
+		writer.println("showbytes is " + (showBytes ? "on" : "off"));
+	}
+
 
 	protected void handleDataRegs(String[] tokens)
 	{
@@ -279,7 +396,7 @@ public class Monitor implements Runnable
 			return;
 		}
 		String address = tokens[1];
-		int size = bus.size();
+		int size = memory.size();
 		try
 		{
 			int addr = parseInt(address);
@@ -357,7 +474,7 @@ public class Monitor implements Runnable
 		int count = 0;
 		StringBuilder buffer = new StringBuilder(80);
 
-		while(start < bus.size() && count < num_instructions)
+		while(start < memory.size() && count < num_instructions)
 		{
 			buffer.delete(0, buffer.length());
 			int opcode = cpu.readMemoryWord(start);
@@ -399,7 +516,7 @@ public class Monitor implements Runnable
 
 		buffer.delete(0, buffer.length());
 		int addr = cpu.getPC();
-		if(addr < 0 || addr >= bus.size())
+		if(addr < 0 || addr >= memory.size())
 		{
 			buffer.append(String.format("%08x   ????", addr));
 		}
@@ -624,7 +741,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 						return;
@@ -643,7 +760,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 						return;
@@ -675,7 +792,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 						return;
@@ -694,7 +811,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 						return;
@@ -725,7 +842,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 					}
@@ -746,7 +863,7 @@ public class Monitor implements Runnable
 				try
 				{
 					int addr = parseInt(address);
-					if(addr < 0 || addr >= bus.size())
+					if(addr < 0 || addr >= memory.size())
 					{
 						writer.println("Address out of range");
 						return;
@@ -789,7 +906,7 @@ public class Monitor implements Runnable
 			return;
 		}
 
-		if(address + (int)f.length() >= bus.size())
+		if(address + (int)f.length() >= memory.size())
 		{
 			//need larger memory
 			writer.println("Need larger memory to load this file at " + tokens[1]);
@@ -803,7 +920,7 @@ public class Monitor implements Runnable
 			fis.close();
 			for(int n = 0; n < len; n++)
 			{
-				bus.writeByte(address, buffer[n]);
+				memory.writeByte(address, buffer[n]);
 				address++;
 			}
 //			cpu.reset();

@@ -1,7 +1,7 @@
 package m68k.cpu;
 
 import junit.framework.TestCase;
-import m68k.memory.MemoryBus;
+import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 
 /*
@@ -30,7 +30,7 @@ import m68k.memory.MemorySpace;
 */
 public class MC68000Test extends TestCase
 {
-	MemoryBus bus;
+	AddressSpace bus;
 	Cpu cpu;
 
 	public void setUp()

@@ -30,7 +30,7 @@ public class MemorySpaceTest extends TestCase
 {
 	public void testCreate()
 	{
-		MemoryBus bus = new MemorySpace(4);
+		AddressSpace bus = new MemorySpace(4);
 		assertEquals(4096, bus.size());
 
 		bus = new MemorySpace(32);
@@ -39,7 +39,7 @@ public class MemorySpaceTest extends TestCase
 
 	public void testMemory()
 	{
-		MemoryBus bus = new MemorySpace(1);
+		AddressSpace bus = new MemorySpace(1);
 		bus.writeByte(4, 0x55);
 		assertEquals(0x55000000, bus.readLong(4));
 		assertEquals(0x5500, bus.readWord(4));

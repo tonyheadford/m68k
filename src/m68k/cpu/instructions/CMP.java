@@ -107,8 +107,8 @@ public class CMP implements InstructionHandler
 	{
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
 
-		int s = op.getByteSigned();
-		int d = cpu.getDataRegisterByteSigned((opcode >> 9) & 0x07);
+		int s = op.getByte();
+		int d = cpu.getDataRegisterByte((opcode >> 9) & 0x07);
 
 		int r = d - s;
 
@@ -121,8 +121,8 @@ public class CMP implements InstructionHandler
 	{
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
 
-		int s = op.getWordSigned();
-		int d = cpu.getDataRegisterWordSigned((opcode >> 9) & 0x07);
+		int s = op.getWord();
+		int d = cpu.getDataRegisterWord((opcode >> 9) & 0x07);
 
 		int r = d - s;
 

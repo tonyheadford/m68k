@@ -1,7 +1,7 @@
 package m68k.cpu;
 
 import m68k.cpu.instructions.*;
-import m68k.memory.MemoryBus;
+import m68k.memory.AddressSpace;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -33,9 +33,9 @@ public class MC68000 extends CpuCore implements InstructionSet
 	protected final Instruction unknown;
 	protected int loaded_ops;
 
-	public MC68000(MemoryBus bus)
+	public MC68000(AddressSpace memory)
 	{
-		super(bus);
+		super(memory);
 		i_table = new Instruction[65536];
 		for(int i = 0; i < 65536; i++)
 			i_table[i] = null;
@@ -60,7 +60,11 @@ public class MC68000 extends CpuCore implements InstructionSet
 		}
 		else
 		{
-			throw new IllegalArgumentException("Invalid opcode: 0x" + Integer.toHexString(opcode));
+			// Illegal Instruction
+			System.err.format("Illegal instruction $%04x at $%x\n", opcode, currentInstructionAddress);
+			raiseException(4);
+			return 34;
+			// throw new IllegalArgumentException("Invalid opcode: 0x" + Integer.toHexString(opcode));
 		}
 	}
 

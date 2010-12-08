@@ -1,6 +1,6 @@
 package m68k.cpu;
 
-import m68k.memory.MemoryBus;
+import m68k.memory.AddressSpace;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -28,7 +28,7 @@ import m68k.memory.MemoryBus;
 */
 public abstract class CpuCore implements Cpu
 {
-	protected final MemoryBus bus;
+	protected final AddressSpace memory;
 	protected int[] data_regs;
 	protected int[] addr_regs;
 	protected int reg_pc;
@@ -42,9 +42,9 @@ public abstract class CpuCore implements Cpu
 	protected int currentInstructionAddress;
 	protected StringBuilder disasmBuffer;
 
-	public CpuCore(MemoryBus bus)
+	public CpuCore(AddressSpace memory)
 	{
-		this.bus = bus;
+		this.memory = memory;
 
 		data_regs = new int[8];
 		addr_regs = new int[8];
@@ -63,9 +63,9 @@ public abstract class CpuCore implements Cpu
 		//TODO: this has to be sent to all external devices - called by RESET instruction
 		//and during initialization (is this correct ?)
 
-		reg_ssp = bus.readLong(0);
+		reg_ssp = memory.readLong(0);
 		addr_regs[7] = reg_ssp;
-		reg_pc = bus.readLong(4);
+		reg_pc = memory.readLong(4);
 		//supervisor mode, interrupts enabled
 		reg_sr = 0x2700;
 	}
@@ -1002,35 +1002,35 @@ public abstract class CpuCore implements Cpu
 	//memory interface
 	public int readMemoryByte(int addr)
 	{
-		return bus.readByte(addr);
+		return memory.readByte(addr);
 	}
 	public int readMemoryByteSigned(int addr)
 	{
-		return signExtendByte(bus.readByte(addr));
+		return signExtendByte(memory.readByte(addr));
 	}
 	public int readMemoryWord(int addr)
 	{
-		return bus.readWord(addr);
+		return memory.readWord(addr);
 	}
 	public int readMemoryWordSigned(int addr)
 	{
-		return signExtendWord(bus.readWord(addr));
+		return signExtendWord(memory.readWord(addr));
 	}
 	public int readMemoryLong(int addr)
 	{
-		return bus.readLong(addr);
+		return memory.readLong(addr);
 	}
 	public void writeMemoryByte(int addr, int value)
 	{
-		bus.writeByte(addr, value);
+		memory.writeByte(addr, value);
 	}
 	public void writeMemoryWord(int addr, int value)
 	{
-		bus.writeWord(addr, value);
+		memory.writeWord(addr, value);
 	}
 	public void writeMemoryLong(int addr, int value)
 	{
-		bus.writeLong(addr, value);
+		memory.writeLong(addr, value);
 	}
 
 	public Operand resolveSrcEA(int mode, int reg, Size size)
@@ -1102,7 +1102,7 @@ public abstract class CpuCore implements Cpu
 			case 5:
 			{
 				mem = readMemoryWordSigned(address);
-				disasmBuffer.append(mem).append("(a").append(reg).append(")");
+				disasmBuffer.append(String.format("$%x",mem)).append("(a").append(reg).append(")");
 				bytes_read = 2;
 				break;
 			}
@@ -1110,7 +1110,7 @@ public abstract class CpuCore implements Cpu
 			{
 				mem = readMemoryWord(address);
 				int dis = signExtendByte(mem);
-				disasmBuffer.append(dis).append("(a").append(reg).append(",");
+				disasmBuffer.append(String.format("$%x",dis)).append("(a").append(reg).append(",");
 				disasmBuffer.append(((mem & 0x8000) != 0 ? "a" : "d")).append((mem >> 12) & 0x07).append(((mem & 0x0800) != 0 ? ".l" : ".w")).append(")");
 				bytes_read = 2;
 				break;
@@ -1122,21 +1122,21 @@ public abstract class CpuCore implements Cpu
 					case 0:
 					{
 						mem = readMemoryWord(address);
-						disasmBuffer.append("$").append(String.format("%04x", mem));
+						disasmBuffer.append(String.format("$%04x", mem));
 						bytes_read = 2;
 						break;
 					}
 					case 1:
 					{
 						mem = readMemoryLong(address);
-						disasmBuffer.append("$").append(String.format("%08x", mem));
+						disasmBuffer.append(String.format("$%08x", mem));
 						bytes_read = 4;
 						break;
 					}
 					case 2:
 					{
 						mem = readMemoryWordSigned(address);
-						disasmBuffer.append(mem).append("(pc)");
+						disasmBuffer.append(String.format("$%x(pc)",mem));
 						bytes_read = 2;
 						break;
 					}
@@ -1144,7 +1144,7 @@ public abstract class CpuCore implements Cpu
 					{
 						mem = readMemoryWord(address);
 						int dis = signExtendByte(mem);
-						disasmBuffer.append(dis).append("(pc,");
+						disasmBuffer.append(String.format("$%x(pc,", dis));
 						disasmBuffer.append(((mem & 0x8000) != 0 ? "a" : "d")).append((mem >> 12) & 0x07).append(((mem & 0x0800) != 0 ? ".l" : ".w")).append(")");
 						bytes_read = 2;
 						break;
@@ -1510,7 +1510,7 @@ public abstract class CpuCore implements Cpu
 		// used for jmp and jsr
 		public int getComputedAddress()
 		{
-			return getDataRegisterLong(regNumber);
+			return address;
 		}
 
 		public int index()
@@ -1782,7 +1782,7 @@ public abstract class CpuCore implements Cpu
 
 		public String toString()
 		{
-			return new StringBuilder(10).append(displacement).append("(a").append(regNumber).append(")").toString();
+			return new StringBuilder(10).append(String.format("$%x",displacement)).append("(a").append(regNumber).append(")").toString();
 		}
 	}
 
