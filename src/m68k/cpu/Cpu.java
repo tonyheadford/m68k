@@ -1,5 +1,7 @@
 package m68k.cpu;
 
+import m68k.memory.AddressSpace;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -35,6 +37,7 @@ public interface Cpu
 	public static final int SUPERVISOR_FLAG = 0x2000;
 	public static final int TRACE_FLAG = 0x8000;
 
+	public void setAddressSpace(AddressSpace memory);
 	public void reset();
 	public void stop();
 	public int execute();

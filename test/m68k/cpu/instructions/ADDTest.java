@@ -38,7 +38,8 @@ public class ADDTest extends TestCase
 	public void setUp()
 	{
 		bus = new MemorySpace(1);	//create 1kb of memory for the cpu
-		cpu = new MC68000(bus);
+		cpu = new MC68000();
+		cpu.setAddressSpace(bus);
 		cpu.setAddrRegisterLong(7, 0x200);
 	}
 

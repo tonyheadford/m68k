@@ -36,7 +36,8 @@ public class MC68000Test extends TestCase
 	public void setUp()
 	{
 		bus = new MemorySpace(1);	//create 1kb of memory for the cpu
-		cpu = new MC68000(bus);
+		cpu = new MC68000();
+		cpu.setAddressSpace(bus);
 	}
 
 	public void testDataRegs()

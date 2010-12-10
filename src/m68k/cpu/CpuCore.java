@@ -28,7 +28,7 @@ import m68k.memory.AddressSpace;
 */
 public abstract class CpuCore implements Cpu
 {
-	protected final AddressSpace memory;
+	protected AddressSpace memory;
 	protected int[] data_regs;
 	protected int[] addr_regs;
 	protected int reg_pc;
@@ -42,20 +42,23 @@ public abstract class CpuCore implements Cpu
 	protected int currentInstructionAddress;
 	protected StringBuilder disasmBuffer;
 
-	public CpuCore(AddressSpace memory)
+	public CpuCore()
 	{
-		this.memory = memory;
-
 		data_regs = new int[8];
 		addr_regs = new int[8];
 
 		srcEAHandler = null;
 		dstEAHandler = null;
 
-		disasmBuffer = new StringBuilder(64);
+		memory = null;
 
+		disasmBuffer = new StringBuilder(64);
 		initEAHandlers();
-		reset();
+	}
+
+	public void setAddressSpace(AddressSpace as)
+	{
+		this.memory = as;
 	}
 
 	public void reset()

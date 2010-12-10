@@ -1,7 +1,6 @@
 package m68k.cpu;
 
 import m68k.cpu.instructions.*;
-import m68k.memory.AddressSpace;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -33,9 +32,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 	protected final Instruction unknown;
 	protected int loaded_ops;
 
-	public MC68000(AddressSpace memory)
+	public MC68000()
 	{
-		super(memory);
 		i_table = new Instruction[65536];
 		for(int i = 0; i < 65536; i++)
 			i_table[i] = null;

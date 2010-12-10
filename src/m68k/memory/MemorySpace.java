@@ -88,31 +88,26 @@ public class MemorySpace implements AddressSpace
 		return readByte(addr);
 	}
 
-	@Override
 	public int internalReadWord(int addr)
 	{
 		return readWord(addr);
 	}
 
-	@Override
 	public int internalReadLong(int addr)
 	{
 		return readLong(addr);
 	}
 
-	@Override
 	public void internalWriteByte(int addr, int value)
 	{
 		writeByte(addr, value);
 	}
 
-	@Override
 	public void internalWriteWord(int addr, int value)
 	{
 		writeWord(addr, value);
 	}
 
-	@Override
 	public void internalWriteLong(int addr, int value)
 	{
 		writeLong(addr, value);

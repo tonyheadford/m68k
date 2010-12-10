@@ -80,7 +80,8 @@ public class Monitor implements Runnable
 		System.out.println("m68k Monitor v0.1 - Copyright 2008-2010 Tony Headford");
 
 		AddressSpace memory = new MemorySpace(mem_size);
-		Cpu cpu = new MC68000(memory);
+		Cpu cpu = new MC68000();
+		cpu.setAddressSpace(memory);
 
 		Monitor monitor = new Monitor(cpu,memory);
 		monitor.run();
