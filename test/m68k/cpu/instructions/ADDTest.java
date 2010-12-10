@@ -40,6 +40,7 @@ public class ADDTest extends TestCase
 		bus = new MemorySpace(1);	//create 1kb of memory for the cpu
 		cpu = new MC68000();
 		cpu.setAddressSpace(bus);
+		cpu.reset();
 		cpu.setAddrRegisterLong(7, 0x200);
 	}
 

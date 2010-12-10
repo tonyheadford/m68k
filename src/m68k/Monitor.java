@@ -82,6 +82,7 @@ public class Monitor implements Runnable
 		AddressSpace memory = new MemorySpace(mem_size);
 		Cpu cpu = new MC68000();
 		cpu.setAddressSpace(memory);
+		cpu.reset();	//init cpu
 
 		Monitor monitor = new Monitor(cpu,memory);
 		monitor.run();

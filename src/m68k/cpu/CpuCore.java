@@ -1105,7 +1105,7 @@ public abstract class CpuCore implements Cpu
 			case 5:
 			{
 				mem = readMemoryWordSigned(address);
-				disasmBuffer.append(String.format("$%x",mem)).append("(a").append(reg).append(")");
+				disasmBuffer.append(String.format("$%04x",(short)mem)).append("(a").append(reg).append(")");
 				bytes_read = 2;
 				break;
 			}
@@ -1113,7 +1113,7 @@ public abstract class CpuCore implements Cpu
 			{
 				mem = readMemoryWord(address);
 				int dis = signExtendByte(mem);
-				disasmBuffer.append(String.format("$%x",dis)).append("(a").append(reg).append(",");
+				disasmBuffer.append(String.format("$%02x",(byte)dis)).append("(a").append(reg).append(",");
 				disasmBuffer.append(((mem & 0x8000) != 0 ? "a" : "d")).append((mem >> 12) & 0x07).append(((mem & 0x0800) != 0 ? ".l" : ".w")).append(")");
 				bytes_read = 2;
 				break;
@@ -1139,7 +1139,7 @@ public abstract class CpuCore implements Cpu
 					case 2:
 					{
 						mem = readMemoryWordSigned(address);
-						disasmBuffer.append(String.format("$%x(pc)",mem));
+						disasmBuffer.append(String.format("$%04x(pc)",(short)mem));
 						bytes_read = 2;
 						break;
 					}
@@ -1147,7 +1147,7 @@ public abstract class CpuCore implements Cpu
 					{
 						mem = readMemoryWord(address);
 						int dis = signExtendByte(mem);
-						disasmBuffer.append(String.format("$%x(pc,", dis));
+						disasmBuffer.append(String.format("$%02x(pc,", (byte)dis));
 						disasmBuffer.append(((mem & 0x8000) != 0 ? "a" : "d")).append((mem >> 12) & 0x07).append(((mem & 0x0800) != 0 ? ".l" : ".w")).append(")");
 						bytes_read = 2;
 						break;
