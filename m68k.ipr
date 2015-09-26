@@ -261,16 +261,6 @@
     <option name="AUTOSCROLL_FROM_SOURCE" value="false" />
     <option name="ACTIVE_ACTIONS" value="" />
   </component>
-  <component name="SvnConfiguration">
-    <option name="USER" value="" />
-    <option name="PASSWORD" value="" />
-    <option name="LAST_MERGED_REVISION" />
-    <option name="UPDATE_RUN_STATUS" value="false" />
-    <option name="UPDATE_RECURSIVELY" value="true" />
-    <option name="MERGE_DRY_RUN" value="false" />
-    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
-    <myIsUseDefaultProxy>true</myIsUseDefaultProxy>
-  </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
       <are-packages-shown value="false" />

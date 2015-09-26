@@ -31,3 +31,8 @@ Please give me your feedback and comments and report any bugs via my GitHub proj
 License
 -------
 The code is released under the Open Source BSD License.
+
+
+Contributors
+------------
+Many thanks to [Wolfgang Lenerz](https://github.com/flockermush) for contributing his (many) bug fixes.
