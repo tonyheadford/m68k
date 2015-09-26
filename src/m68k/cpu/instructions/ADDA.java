@@ -91,12 +91,9 @@ public class ADDA implements InstructionHandler
 	protected final int adda_word(int opcode)
 	{
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
-		// should this be sign extended ?
-		int s = src.getWord();
+		int s = src.getWordSigned();
 		int reg = (opcode >> 9) & 0x07;
-		int d = cpu.getAddrRegisterWord(reg);
-		int r = s + d;
-		cpu.setAddrRegisterLong(reg, r);
+		cpu.setAddrRegisterLong(reg, cpu.getAddrRegisterLong(reg)+s);
 
 		//No flags affected
 
@@ -108,9 +105,7 @@ public class ADDA implements InstructionHandler
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
 		int s = src.getLong();
 		int reg = (opcode >> 9) & 0x07;
-		int d = cpu.getAddrRegisterLong(reg);
-		int r = s + d;
-		cpu.setAddrRegisterLong(reg, r);
+		cpu.setAddrRegisterLong(reg, cpu.getAddrRegisterLong(reg) + s);
 
 		//No flags affected
 

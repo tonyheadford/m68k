@@ -72,8 +72,11 @@ public class MULS implements InstructionHandler
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
 
 		int s = op.getWordSigned();
-		int reg = (opcode >> 9) & 0x07;
-		int d = cpu.getDataRegisterLong(reg);
+		int reg = (opcode >> 9) & 0x07; 
+		// mulu for the 68008,68000,68010 only uses the lower word of the reg
+		int d = cpu.getDataRegisterWord(reg);
+		if((d & 0x8000) == 0x8000)
+			d |= 0xffff0000;		// sign extend
 
 		int r = s * d;
 

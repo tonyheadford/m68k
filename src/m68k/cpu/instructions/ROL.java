@@ -248,7 +248,8 @@ public class ROL implements InstructionHandler
 
 	protected int rol_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
@@ -270,7 +271,8 @@ public class ROL implements InstructionHandler
 
 	protected int rol_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
@@ -292,7 +294,8 @@ public class ROL implements InstructionHandler
 
 	protected int rol_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);

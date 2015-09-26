@@ -42,8 +42,10 @@ public class RTE implements InstructionHandler
 			{
 				if(cpu.isSupervisorMode())
 				{
-					cpu.setSR(cpu.popWord());
-					cpu.setPC(cpu.popLong());
+					int newsr = cpu.popWord();  // SR before the exception
+					cpu.setPC(cpu.popLong());	// pop this BEFORE setting the SR which may change A7
+					cpu.setSR2(newsr); 
+                                        
 					return 20;
 				}
 				else

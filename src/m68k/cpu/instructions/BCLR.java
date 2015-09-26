@@ -133,7 +133,9 @@ public class BCLR implements InstructionHandler
 
 	protected final int bclr_dyn_byte(int opcode)
 	{
-		int bit = 1 << cpu.getDataRegisterLong((opcode >> 9) & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 7;
+		bit = 1 << bit;
 
 		// memory destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
@@ -150,7 +152,7 @@ public class BCLR implements InstructionHandler
 		}
 
 		//clear the bit
-		val &= ~(bit);
+		val &= ~bit;
 
 		op.setByte(val);
 		return 8 + op.getTiming();
@@ -158,7 +160,9 @@ public class BCLR implements InstructionHandler
 
 	protected final int bclr_dyn_long(int opcode)
 	{
-		int bit = 1 << cpu.getDataRegisterLong((opcode >> 9) & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		bit =1 << bit;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -174,7 +178,7 @@ public class BCLR implements InstructionHandler
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 		//clear the bit
-		val &= ~(bit);
+		val &= ~bit;
 
 		op.setLong(val);
 		return 10;
@@ -183,7 +187,9 @@ public class BCLR implements InstructionHandler
 
 	protected final int bclr_static_byte(int opcode)
 	{
-		int bit = 1 << (cpu.fetchPCWord() & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.fetchPCWord() & 7;
+		bit = 1 << bit;
 
 		// memory destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
@@ -199,14 +205,16 @@ public class BCLR implements InstructionHandler
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 		//clear the bit
-		val &= ~(bit);
+		val &= ~bit;
 		op.setByte(val);
 		return 12 + op.getTiming();
 	}
 
 	protected final int bclr_static_long(int opcode)
 	{
-		int bit = 1 << (cpu.fetchPCWord() & 0x1f);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.fetchPCWord() & 31;
+		bit = 1 << bit;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -222,7 +230,7 @@ public class BCLR implements InstructionHandler
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 		//clear the bit
-		val &= ~(bit);
+		val &= ~bit;
 
 		op.setLong(val);
 		return 14;

@@ -86,6 +86,7 @@ public interface Cpu
 	public int getSR();
 	public void setCCRegister(int value);
 	public void setSR(int value);
+	public void setSR2(int value);
 	//flags
 	public void setFlags(int flags);
 	public void clrFlags(int flags);

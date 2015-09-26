@@ -189,7 +189,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		d &= 0x00ff;
@@ -213,7 +213,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		d &= 0x0000ffff;
@@ -237,7 +237,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		cpu.setDataRegisterLong(reg, d);
@@ -248,7 +248,7 @@ public class ASR implements InstructionHandler
 
 	protected int asr_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
@@ -258,7 +258,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		d &= 0x00ff;
@@ -270,7 +270,7 @@ public class ASR implements InstructionHandler
 
 	protected int asr_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
@@ -280,7 +280,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		d &= 0x0000ffff;
@@ -292,7 +292,7 @@ public class ASR implements InstructionHandler
 
 	protected int asr_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
@@ -302,7 +302,7 @@ public class ASR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			d |= msb;	//shift in the msb if set
 		}
 		cpu.setDataRegisterLong(reg, d);
@@ -318,7 +318,7 @@ public class ASR implements InstructionHandler
 		int last_out = v & 0x01;
 		int msb = v & 0x8000;
 
-		v >>= 1;
+		v >>>= 1;
 		v |= msb;
 
 		op.setWord(v);

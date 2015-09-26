@@ -27,6 +27,11 @@ import m68k.cpu.*;
 //
 */
 
+// when the ea is specified by a pre-decreasing mode (eg movem.l range,-(an) , then, if the addressing register
+// itself is part of the range and for a 68000 and 68010, the value stored is the INITIAL value of the addressing reg.
+// For a 68020 and up, the value written is the initial value minus the size (word or long) of the operation.
+
+
 public class MOVEM implements InstructionHandler
 {
 	protected final Cpu cpu;
@@ -94,7 +99,7 @@ public class MOVEM implements InstructionHandler
 				}
 			}
 		}
-
+                
 		// mem to reg
 		for(int sz = 0; sz < 2; sz++)
 		{
@@ -134,7 +139,7 @@ public class MOVEM implements InstructionHandler
 
 				for(int ea_reg = 0; ea_reg < 8; ea_reg++)
 				{
-					if(ea_mode == 7 && ea_reg > 1)
+					if(ea_mode == 7 && ea_reg > 3)
 						break;
 
 					is.addInstruction(base + (ea_mode << 3) + ea_reg, i);
@@ -211,7 +216,7 @@ public class MOVEM implements InstructionHandler
 		int count;
 
 		//true up if (An)+ addressing mode
-		if(((opcode >> 3) & 0x07) == 4)
+		if(((opcode >> 3) & 0x07) == 3)
 		{
 			count = getMultipleLongPostInc(opcode & 0x07, reglist, address);
 		}
@@ -581,7 +586,8 @@ public class MOVEM implements InstructionHandler
 	{
 		int bit = 1;
 		int regcount = 0;
-		int start = address;
+		int start = address + 2;
+		int oldreg = address & 0xffff;
 
 		//assumes a7 is first bit
 		for(int n = 0; n < 8; n++)
@@ -589,7 +595,10 @@ public class MOVEM implements InstructionHandler
 			if((reglist & bit) != 0)
 			{
 				start -= 2;
-				cpu.writeMemoryWord(start, cpu.getAddrRegisterWord(7 - n));
+				if (reg == 7 - n)                       	// if the EA register itself is also moved, use initial value
+					cpu.writeMemoryWord(start,oldreg);		// see comment at beginning of file
+				else
+					cpu.writeMemoryWord(start, cpu.getAddrRegisterWord(7 - n));
 				regcount++;
 			}
 			bit <<= 1;
@@ -646,15 +655,20 @@ public class MOVEM implements InstructionHandler
 	{
 		int bit = 1;
 		int regcount = 0;
-		int start = address;
 
+		int start = address + 4; // avoid double decrease
+        
+		int oldreg = address;		// the old value of the address resister used as EA, see comment at beginning of file
 		//assumes a7 is first bit
 		for(int n = 0; n < 8; n++)
 		{
 			if((reglist & bit) != 0)
 			{
 				start -= 4;
-				cpu.writeMemoryLong(start, cpu.getAddrRegisterLong(7 - n));
+				if (reg == 7-n)                         	// if the EA register itself is also moved, use initial value
+					cpu.writeMemoryLong(start, oldreg);
+				else
+					cpu.writeMemoryLong(start, cpu.getAddrRegisterLong(7 - n));
 				regcount++;
 			}
 			bit <<= 1;

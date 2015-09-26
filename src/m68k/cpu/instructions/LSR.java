@@ -188,7 +188,7 @@ public class LSR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		d &= 0x00ff;
 		cpu.setDataRegisterByte(reg, d);
@@ -210,7 +210,7 @@ public class LSR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		d &= 0x0000ffff;
 		cpu.setDataRegisterWord(reg, d);
@@ -231,8 +231,9 @@ public class LSR implements InstructionHandler
 		int last_out = 0;
 		for(int s= 0; s < shift; s++)
 		{
+                    
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		cpu.setDataRegisterLong(reg, d);
 
@@ -242,7 +243,8 @@ public class LSR implements InstructionHandler
 
 	protected int lsr_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
@@ -251,7 +253,7 @@ public class LSR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		d &= 0x00ff;
 		cpu.setDataRegisterByte(reg, d);
@@ -262,7 +264,8 @@ public class LSR implements InstructionHandler
 
 	protected int lsr_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
@@ -271,7 +274,7 @@ public class LSR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		d &= 0x0000ffff;
 		cpu.setDataRegisterWord(reg, d);
@@ -282,7 +285,8 @@ public class LSR implements InstructionHandler
 
 	protected int lsr_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
@@ -291,7 +295,7 @@ public class LSR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 		}
 		cpu.setDataRegisterLong(reg, d);
 
@@ -305,7 +309,7 @@ public class LSR implements InstructionHandler
 		int v = op.getWord();
 		int last_out = v & 0x01;
 
-		v >>= 1;
+		v >>>= 1;
 
 		op.setWord(v);
 		cpu.calcFlags(InstructionType.LSR, 1, last_out, v, Size.Word);

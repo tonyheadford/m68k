@@ -1,7 +1,6 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
-
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -26,78 +25,67 @@ import m68k.cpu.*;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class TAS implements InstructionHandler
+public class ORI_TO_SR implements InstructionHandler
 {
 	protected final Cpu cpu;
 
-	public TAS(Cpu cpu)
+	public ORI_TO_SR(Cpu cpu)
 	{
 		this.cpu = cpu;
 	}
 
-	public final void register(InstructionSet is)
+	public void register(InstructionSet is)
 	{
-		int base = 0x4ac0;
-		Instruction i = new Instruction() {
-			public int execute(int opcode)
-			{
-				return tas(opcode);
-			}
-			public DisassembledInstruction disassemble(int address, int opcode)
-			{
-				return disassembleOp(address, opcode, Size.Byte);
-			}
-		};
+		int base;
+		Instruction i;
 
-		for(int ea_mode = 0; ea_mode < 8; ea_mode++)
-		{
-			if(ea_mode == 1)
-				continue;
-
-			for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-			{
-				if(ea_mode == 7 && ea_reg > 1)
-					break;
-				is.addInstruction(base + (ea_mode << 3) + ea_reg, i);
-			}
-		}
+		   base = 0x007c;
+                    i = new Instruction() {
+                        public int execute(int opcode)
+                        {
+                                return ori_word(opcode);
+                        }
+                        public DisassembledInstruction disassemble(int address, int opcode)
+                        {
+                                return disassembleOp(address, opcode, Size.Word);
+                        }
+                };
+                is.addInstruction(base, i);
 	}
-
-	protected synchronized final int tas(int opcode)
+        
+	protected int ori_word(int opcode)
 	{
-		//TODO: this is for multi-processor systems and provides an atomic read-modify-write - this isn't handled at the moment
-                
-		int mode = (opcode >> 3) & 0x07;
-		int reg = (opcode & 0x07);
-		Operand op = cpu.resolveSrcEA(mode, reg, Size.Byte);
-		int v = op.getByte();
-
-		if(v == 0)
+		// mask out bits 5,6,7 & 11 : they are always 0!;
+		int s = cpu.fetchPCWordSigned() & 0xf71f;
+		if(cpu.isSupervisorMode())
 		{
-			cpu.setFlags(Cpu.Z_FLAG);
+			cpu.setSR(cpu.getSR()|s);
 		}
 		else
 		{
-			cpu.clrFlags(Cpu.Z_FLAG);
+			cpu.raiseSRException();
+			return 34;
 		}
-		if((v & 0x080) != 0)
-		{
-			cpu.setFlags(Cpu.N_FLAG);
-		}
-		else
-		{
-			cpu.clrFlags(Cpu.N_FLAG);
-		}
-		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
-
-		op.setByte(v | 0x80);
-
-		return (op.isRegisterMode() ? 4 : 14 + op.getTiming());
+		return 8;                                   // i'm not sure this is true
 	}
 
+        
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{
-		DisassembledOperand op = cpu.disassembleSrcEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
-		return new DisassembledInstruction(address, opcode, "tas", op);
+		int imm_bytes;
+		int imm;
+		String is;
+		imm = cpu.readMemoryWord(address + 2);
+		is = String.format("#$%04x", imm);
+		imm_bytes = 2;
+		DisassembledOperand src = new DisassembledOperand(is, imm_bytes, imm);
+		DisassembledOperand dst = cpu.disassembleDstEA(address + 2 + imm_bytes, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
+		return new DisassembledInstruction(address, opcode, "ori" + sz.ext(), src, dst);
+	}
+        
+	protected final DisassembledInstruction bdisassembleOp(int address, int opcode, Size sz)
+	{
+		String is = String.format("#$%04x", cpu.readMemoryWord(address + 2));
+		return new DisassembledInstruction(address, opcode, "ori.w  "+is+",SR" );
 	}
 }

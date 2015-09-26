@@ -257,7 +257,8 @@ public class ASL implements InstructionHandler
 
 	protected int asl_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// this is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
@@ -282,7 +283,8 @@ public class ASL implements InstructionHandler
 
 	protected int asl_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// this is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
@@ -307,7 +309,8 @@ public class ASL implements InstructionHandler
 
 	protected int asl_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// this is mod 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);

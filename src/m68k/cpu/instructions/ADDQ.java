@@ -113,7 +113,7 @@ public class ADDQ implements InstructionHandler
 		if(s == 0)
 			s = 8;
 
-		Operand dst = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
+		Operand dst = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
 		int d = dst.getByteSigned();
 		int r = s + d;
 		dst.setByte(r);
@@ -123,20 +123,28 @@ public class ADDQ implements InstructionHandler
 
 	protected final int addq_word(int opcode)
 	{
+		// ADDQ where the destination is an address register does not affect the flags and the ENTIRE address
+		// reg is affected by the addition (same not true for byte sized, as there is no byte sized addq with address reg).
 		int s = (opcode >> 9 & 0x07);
 		if(s == 0)
 			s = 8;
 
 		int mode = (opcode >> 3) & 0x07;
-		Operand dst = cpu.resolveDstEA(mode, (opcode & 0x07), Size.Word);
-		int d = dst.getWordSigned();
-		int r = s + d;
-		dst.setWord(r);
-		// if destination is An then no CC affected
-		if(mode != 1)
+		if (mode!=1)
+		{
+			Operand dst = cpu.resolveDstEA(mode, (opcode & 0x07), Size.Word);
+			int d = dst.getWordSigned();
+			int r = s + d;
+			dst.setWord(r);
 			cpu.calcFlags(InstructionType.ADD, s, d, r, Size.Word);
-
-		return (dst.isRegisterMode() ? 4 : 8 + dst.getTiming());
+			return (dst.isRegisterMode() ? 4 : 8 + dst.getTiming());
+		}
+		else
+		{
+			int reg=opcode & 0x07;
+			cpu.setAddrRegisterLong(reg,cpu.getAddrRegisterLong(reg)+s);
+			return 4;
+		}
 	}
 
 	protected final int addq_long(int opcode)
@@ -160,7 +168,10 @@ public class ADDQ implements InstructionHandler
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{
-		DisassembledOperand src = new DisassembledOperand("#" + ((opcode >> 9) & 0x07));
+		int s = (opcode >> 9 & 0x07);
+		if(s == 0)
+			s = 8;
+		DisassembledOperand src = new DisassembledOperand("#" + s);
 		DisassembledOperand dst = cpu.disassembleDstEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
 
 		return new DisassembledInstruction(address, opcode, "addq" + sz.ext(), src, dst);

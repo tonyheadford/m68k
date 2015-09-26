@@ -88,14 +88,13 @@ public class CMPA implements InstructionHandler
 
 	protected final int cmpa_word(int opcode)
 	{
+		// the address register is always used as long word, the source reg is sign extended to 32 bits
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
-
+		int d = cpu.getAddrRegisterLong((opcode >> 9) & 0x07);
 		int s = op.getWordSigned();
-		int d = cpu.getAddrRegisterWordSigned((opcode >> 9) & 0x07);
-
 		int r = d - s;
-
-		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Word);
+		// calculate flags on long, not word
+		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Long);
 
 		return 6 + op.getTiming();
 	}
@@ -103,9 +102,8 @@ public class CMPA implements InstructionHandler
 	protected final int cmpa_long(int opcode)
 	{
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
-
-		int s = op.getLong();
 		int d = cpu.getAddrRegisterLong((opcode >> 9) & 0x07);
+		int s = op.getLong();
 
 		int r = d - s;
 
@@ -118,7 +116,6 @@ public class CMPA implements InstructionHandler
 	{
 		DisassembledOperand src = cpu.disassembleSrcEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
 		DisassembledOperand dst = new DisassembledOperand("a" + ((opcode >> 9) & 0x07));
-
-		return new DisassembledInstruction(address, opcode, "cmp" + sz.ext(), src, dst);
+		return new DisassembledInstruction(address, opcode, "cmpa" + sz.ext(), src, dst);
 	}
 }

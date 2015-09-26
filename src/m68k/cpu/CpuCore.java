@@ -248,6 +248,23 @@ public abstract class CpuCore implements Cpu
 		reg_sr = value;
 	}
 
+	/**
+	 * Set the SR when coming from an RTE.
+	 * We might already have been IN supervisor mode when the exception was caused (eg a Trap called in supervisor mode),
+	 * so we must check the S bit we get back from the stack and possibly STAY in supervisor mode even after the RTE.
+	 * @param value
+	 */
+	public void setSR2(int value)
+	{
+		// old value of SR, this will be in supermode
+		reg_sr = value;							// new value of SR, could be user mode or super mode
+		if ((reg_sr & SUPERVISOR_FLAG) == 0)	// we changed back to user mode,change stack pointer
+		{
+			reg_ssp = addr_regs[7];				// keep supervisor stack pointer
+			addr_regs[7] = reg_usp ;			// get user stack pointer
+		}
+	}
+
 	public void setFlags(int flags)
 	{
 		//only set CC flags so clear top byte
@@ -723,7 +740,31 @@ public abstract class CpuCore implements Cpu
 				}
 				break;
 			}
+                            
+			// swap also affects the SR
+			case SWAP:
+			{
+				if(result == 0)
+				{
+					reg_sr |= Z_FLAG;
+				}
+				else
+				{
+					reg_sr &= ~(Z_FLAG);
+				}
 
+				if(Rm)
+				{
+					reg_sr |= N_FLAG;
+				}
+				else
+				{
+					reg_sr &= ~(N_FLAG);
+				}
+				reg_sr &= ~(V_FLAG);            // these are always set to 0
+				reg_sr &= ~(C_FLAG);
+				break;
+			}
 			default:
 			{
 				throw new IllegalArgumentException("No flags handled for " + type);
@@ -873,20 +914,17 @@ public abstract class CpuCore implements Cpu
 	{
 		if(enable)
 		{
-			//switch to supervisor mode
-			if((reg_sr & SUPERVISOR_FLAG) == 0)
+			int old_sr = reg_sr;
+			if ((reg_sr & SUPERVISOR_FLAG) == 0) // were we in supervisor mode already?....
 			{
-				int old_sr = reg_sr;
-
-				reg_sr |= SUPERVISOR_FLAG;	//set supervisor bit
-				//switch stacks
-				reg_usp = addr_regs[7];
+				reg_sr |= SUPERVISOR_FLAG;      // ...no, so set supervisor bit
+				reg_usp = addr_regs[7];         // and change stack pointers
 				addr_regs[7] = reg_ssp;
-
-				//save pc and status regs
-				pushLong(reg_pc);
-				pushWord(old_sr);
 			}
+
+			//save pc and status regs
+			pushLong(reg_pc);
+			pushWord(old_sr);
 		}
 		else
 		{
@@ -908,9 +946,20 @@ public abstract class CpuCore implements Cpu
 	{
 		int address = (vector & 0x00ff) << 2;
 
-		setSupervisorMode(true);
+		// don't call setSupervisorMode, do it directly
+		int old_sr = reg_sr;	// SR BEFORE the exception
 
-		//todo: handle special exception cases & build stack info
+		if ((reg_sr & SUPERVISOR_FLAG) == 0)	// were we in supervisor mode already?....
+		{
+			reg_sr |= SUPERVISOR_FLAG;	// ...no, so set supervisor bit
+			reg_usp = addr_regs[7];		// and change stack pointers
+			addr_regs[7] = reg_ssp;
+		}
+
+		//save pc and status regs
+		pushLong(reg_pc);
+		pushWord(old_sr);
+		reg_sr &= ~(TRACE_FLAG);		// exceptions unset the trace flag
 
 		int xaddress = readMemoryLong(address);
 		if(xaddress == 0)
@@ -989,14 +1038,10 @@ public abstract class CpuCore implements Cpu
 		priority &= 0x07;
 
 		//is it higher than the current interrupt mask ?
-		int level = getInterruptLevel();
-		if(priority >= level)
+    	if(priority >  getInterruptLevel())
 		{
 			//make it an autovectored interrupt
-			int vector = priority + 24;
-
-			raiseException(vector);
-
+			raiseException(priority + 24);
 			setInterruptLevel(priority);
 		}
 	}
@@ -1539,7 +1584,12 @@ public abstract class CpuCore implements Cpu
 			regNumber = param;
 			size = sz;
 			address = getAddrRegisterLong(regNumber);
-			incrementAddrRegister(regNumber, size.byteCount());
+
+			// in the 68008 At LEAST, moving bytes to the stack will change the stack pointer by 2, not 1
+			if (param == 7 && size.byteCount() == 1)
+				incrementAddrRegister(regNumber, 2);
+			else
+				incrementAddrRegister(regNumber, size.byteCount());
 		}
 
 		public int getByte()
@@ -1625,7 +1675,13 @@ public abstract class CpuCore implements Cpu
 		{
 			regNumber = param;
 			size = sz;
-			decrementAddrRegister(regNumber, size.byteCount());
+
+			// in the 68008 At LEAST, moving bytes to the stack will change the stack pointer by 2, not 1
+			if (param == 7 && size.byteCount() == 1)
+				decrementAddrRegister(regNumber, 2);
+			else
+				decrementAddrRegister(regNumber, size.byteCount());
+
 			address = getAddrRegisterLong(regNumber);
 		}
 

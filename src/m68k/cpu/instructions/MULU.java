@@ -73,7 +73,8 @@ public class MULU implements InstructionHandler
 
 		int s = op.getWord();
 		int reg = (opcode >> 9) & 0x07;
-		int d = cpu.getDataRegisterLong(reg);
+		// mulu for the 68008,68000,68010 only uses the lower word of the reg
+		int d = cpu.getDataRegisterWord(reg);
 
 		int r = s * d;
 
@@ -97,13 +98,6 @@ public class MULU implements InstructionHandler
 		cpu.clrFlags((Cpu.V_FLAG | Cpu.C_FLAG));
 
 		cpu.setDataRegisterLong(reg, r);
-
-//		int count = 0;
-//		for(int x = 0; x < 16; x++)
-//		{
-//			count += (s & 1);
-//			s >>= 1;
-//		}
 
 		int x = s;
 		x = (x & 0x5555) + ((x >> 1) & 0x5555);

@@ -6,7 +6,6 @@ import m68k.cpu.*;
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
 //  All rights reserved.
-//
 //  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 //  following conditions are met:
 //
@@ -26,62 +25,65 @@ import m68k.cpu.*;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MOVE_TO_CCR implements InstructionHandler
+public class ANDI_TO_SR implements InstructionHandler
 {
 	protected final Cpu cpu;
 
-	public MOVE_TO_CCR(Cpu cpu)
+	public ANDI_TO_SR(Cpu cpu)
 	{
 		this.cpu = cpu;
 	}
 
-    @Override
-	public final void register(InstructionSet is)
+	public void register(InstructionSet is)
 	{
-		// move to ccr
-		int base = 0x44c0;
-		Instruction i = new Instruction() {
-                    @Override
-			public int execute(int opcode)
-			{
-				return move_to_ccr(opcode);
-			}
-                    @Override
-			public DisassembledInstruction disassemble(int address, int opcode)
-			{
-				return disassembleOp(address, opcode, Size.Word);
-			}
-		};
+		int base;
+		Instruction i;
 
-		for(int ea_mode = 0; ea_mode < 8; ea_mode++)
-		{
-			if(ea_mode == 1)
-				continue;
-
-			for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-			{
-				if(ea_mode == 7 && ea_reg > 4)
-					break;
-
-				is.addInstruction(base + (ea_mode << 3) + ea_reg, i);
-			}
-		}
+				// andi word
+                base = 0x027c;
+                i = new Instruction() {
+                        public int execute(int opcode)
+                        {
+                                return andi_word(opcode);
+                        }
+                        public DisassembledInstruction disassemble(int address, int opcode)
+                        {
+                                return disassembleOp(address, opcode, Size.Word);
+                        }
+                };
+                is.addInstruction(base, i);
 	}
 
-	protected final int move_to_ccr(int opcode)
+	protected int andi_word(int opcode)
 	{
-		// the upper three bits of the ccr must always be 0
-		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Word);
-		int s = src.getWord() & 31;
-		cpu.setCCRegister(s);
-		return 12 + src.getTiming();
+		// mask out bits 5,6,7 & 11 : they are always 0!
+		int s = cpu.fetchPCWordSigned();
+		if(cpu.isSupervisorMode())
+		{
+			s &= 0xf71f;                           // mask out bits 5,6,7 & 11 : they are always 0!
+			cpu.setSR(cpu.getSR()& s);
+		}
+		else
+		{
+			cpu.raiseSRException();
+			return 34;
+		}
+		
+		return 8;                                   // i'm NOT sure about this timing
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{
-		DisassembledOperand src = cpu.disassembleSrcEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
-		DisassembledOperand dst = new DisassembledOperand("ccr");
+		int imm_bytes;
+		int imm;
+		String is;
 
-		return new DisassembledInstruction(address, opcode, "move", src, dst);
+		imm = cpu.readMemoryWord(address + 2);
+		is = String.format("#$%04x", imm);
+		imm_bytes = 2;
+		DisassembledOperand src = new DisassembledOperand(is, imm_bytes, imm);
+		DisassembledOperand dst = cpu.disassembleDstEA(address + 2 + imm_bytes, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
+
+		return new DisassembledInstruction(address, opcode, "andi" + sz.ext(), src, dst);
 	}
 }

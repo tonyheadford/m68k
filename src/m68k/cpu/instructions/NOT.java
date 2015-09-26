@@ -105,7 +105,7 @@ public class NOT implements InstructionHandler
 	{
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07),Size.Byte);
 		int s = op.getByte();
-		int r = ~s;
+		int r = (~s) & 0xFF;
 		op.setByte(r);
 		cpu.calcFlags(InstructionType.NOT, s, 0, r, Size.Byte);
 		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());
@@ -115,7 +115,7 @@ public class NOT implements InstructionHandler
 	{
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07),Size.Word);
 		int s = op.getWord();
-		int r = ~s;
+		int r = (~s) & 0xffff;
 		op.setWord(r);
 		cpu.calcFlags(InstructionType.NOT, s, 0, r, Size.Word);
 		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());

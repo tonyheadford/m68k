@@ -103,9 +103,9 @@ public class CMPI implements InstructionHandler
 
 	protected final int cmpi_byte(int opcode)
 	{
+		int s = CpuUtils.signExtendByte(cpu.fetchPCWord());
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
 
-		int s = CpuUtils.signExtendByte(cpu.fetchPCWord());
 		int d = op.getByteSigned();
 
 		int r = d - s;
@@ -117,23 +117,22 @@ public class CMPI implements InstructionHandler
 
 	protected final int cmpi_word(int opcode)
 	{
+		int s = cpu.fetchPCWordSigned();
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
 
-		int s = cpu.fetchPCWordSigned();
 		int d = op.getWordSigned();
 
 		int r = d - s;
 
 		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Word);
-
 		return (op.isRegisterMode() ? 8 : 8 + op.getTiming());
 	}
 
 	protected final int cmpi_long(int opcode)
 	{
+		int s = cpu.fetchPCLong();
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
 
-		int s = cpu.fetchPCLong();
 		int d = op.getLong();
 
 		int r = d - s;

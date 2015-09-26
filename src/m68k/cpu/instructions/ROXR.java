@@ -175,27 +175,41 @@ public class ROXR implements InstructionHandler
 		}
 	}
 
+        
 	protected int roxr_byte_imm(int opcode)
 	{
 		int shift = (opcode >> 9) & 0x07;
 		if(shift == 0)
-			shift = 8;
+			shift = 8;                        
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x80;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x80;                          // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x00ff;
+		d &= 0xff;
 		cpu.setDataRegisterByte(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Byte);
+		if (xflag)
+			maskFlags = Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags += Cpu.Z_FLAG;
+		if((d & 0x80)!=0)
+			maskFlags += Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
@@ -208,18 +222,32 @@ public class ROXR implements InstructionHandler
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
 
-		int last_out = 0;
+                
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x8000;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x8000;                        // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x0000ffff;
+		d &= 0xffff;
 		cpu.setDataRegisterWord(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Word);
+		if (xflag)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
@@ -233,96 +261,179 @@ public class ROXR implements InstructionHandler
 		int d = cpu.getDataRegisterLong(reg);
 
 		int last_out = 0;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x80000000;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x80000000;                    // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
 		cpu.setDataRegisterLong(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Long);
+		if (xflag)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x80000000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + shift + shift;
 	}
 
 	protected int roxr_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x80;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x80;                          // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x00ff;
+		d &= 0xff;
 		cpu.setDataRegisterByte(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Byte);
+		if (shift!=0)                                   // X flags in unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+			else
+				maskFlags=0;                            // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags +=Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x80)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
 	protected int roxr_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x8000;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x8000;                        // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x0000ffff;
+		d &= 0xffff;
 		cpu.setDataRegisterWord(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Word);
+		if (shift!=0)                                   // X flags in unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+			else
+				maskFlags=0;                            // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags +=Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
 	protected int roxr_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x01;
-			d >>= 1;
-			if(last_out != 0)
-				d |= 0x80000000;
+			last_out = d & 0x01;                    // state of last bit befrre rotate
+			d >>>= 1;                               // use >>> instead of >>, else the msb will always be set!
+			if (xflag)                              // X flag was set before the rotate
+				d |= 0x80000000;                    // so set it in MSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
 		cpu.setDataRegisterLong(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXR, shift, last_out, d, Size.Long);
+		if (shift!=0)                                   // X flags in unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+			else
+				maskFlags=0;                            // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags +=Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x80000000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + shift + shift;
 	}
-
+    
 	protected int roxr_word_mem(int opcode)
 	{
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07),Size.Word);
 		int v = op.getWord();
 		int last_out = v & 0x01;
-
-		v >>= 1;
-		if(last_out != 0)
+		v >>>= 1;
+		if(cpu.isFlagSet(Cpu.X_FLAG))
 			v |= 0x8000;
-
 		op.setWord(v);
-		cpu.calcFlags(InstructionType.ROXR, 1, last_out, v, Size.Word);
+		int maskFlags;
+		if (last_out!=0)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if ((v&0xffff)==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((v & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + op.getTiming();
 	}
 

@@ -133,7 +133,9 @@ public class BSET implements InstructionHandler
 
 	protected final int bset_dyn_byte(int opcode)
 	{
-		int bit = 1 << cpu.getDataRegisterLong((opcode >> 9) & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) &7;
+		bit =1 << bit;
 
 		// memory destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
@@ -158,7 +160,9 @@ public class BSET implements InstructionHandler
 
 	protected final int bset_dyn_long(int opcode)
 	{
-		int bit = 1 << cpu.getDataRegisterLong((opcode >> 9) & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		bit = 1 << bit;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -183,7 +187,9 @@ public class BSET implements InstructionHandler
 
 	protected final int bset_static_byte(int opcode)
 	{
-		int bit = 1 << (cpu.fetchPCWord() & 0x07);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.fetchPCWord() & 7;
+		bit = 1 << bit;
 
 		// memory destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
@@ -206,7 +212,9 @@ public class BSET implements InstructionHandler
 
 	protected final int bset_static_long(int opcode)
 	{
-		int bit = 1 << (cpu.fetchPCWord() & 0x1f);
+		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
+		int bit = cpu.fetchPCWord() & 31;
+		bit = 1 << bit;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);

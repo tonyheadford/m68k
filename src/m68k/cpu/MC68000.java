@@ -31,7 +31,6 @@ public class MC68000 extends CpuCore implements InstructionSet
 	protected Instruction[] i_table;
 	protected final Instruction unknown;
 	protected int loaded_ops;
-
 	public MC68000()
 	{
 		i_table = new Instruction[65536];
@@ -50,7 +49,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 	{
 		//save the PC address
 		currentInstructionAddress = reg_pc;
-		int opcode = fetchPCWord();
+                int opcode = fetchPCWord();
+                
 		Instruction i = i_table[opcode];
 		if(i != null)
 		{
@@ -76,6 +76,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 		new ADDX(this).register(this);
 		new AND(this).register(this);
 		new ANDI(this).register(this);
+		new ANDI_TO_SR(this).register(this);
+		new ANDI_TO_CCR(this).register(this);
 		new ASL(this).register(this);
 		new ASR(this).register(this);
 		new Bcc(this).register(this);
@@ -94,6 +96,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 		new DIVU(this).register(this);
 		new EOR(this).register(this);
 		new EORI(this).register(this);
+		new EORI_TO_CCR(this).register(this);
+		new EORI_TO_SR(this).register(this);
 		new EXG(this).register(this);
 		new EXT(this).register(this);
 		new ILLEGAL(this).register(this);
@@ -121,6 +125,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 		new NOT(this).register(this);
 		new OR(this).register(this);
 		new ORI(this).register(this);
+		new ORI_TO_SR(this).register(this);
+		new ORI_TO_CCR(this).register(this);
 		new PEA(this).register(this);
 		new RESET(this).register(this);
 		new ROL(this).register(this);

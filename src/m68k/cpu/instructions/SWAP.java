@@ -62,6 +62,8 @@ public class SWAP implements InstructionHandler
 		int vh = (v >> 16) & 0x0000ffff;
 		v = (v << 16) + vh;
 		cpu.setDataRegisterLong(reg, v);
+		// swap affects the registers : z set if result = 0, N set if bit 31 set, v & c always cleared
+		cpu.calcFlags(InstructionType.SWAP, v,v,v, Size.Long);
 		return 4;
 	}
 

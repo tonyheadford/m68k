@@ -84,6 +84,7 @@ public class DisassembledInstruction
 
 	public void shortFormat(StringBuilder buffer)
 	{
+            
 		buffer.append(String.format("%08x   ", address));
 		switch(num_operands)
 		{

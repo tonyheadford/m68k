@@ -68,12 +68,13 @@ public class MOVE_TO_SR implements InstructionHandler
 	protected final int move_to_sr(int opcode)
 	{
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Word);
-		int s = src.getWord();
+		int s = src.getWord() & 0xf71f;		// mask out bits 5,6,7 & 11 : they are always 0!;
 		if(!cpu.isSupervisorMode())
 		{
 			cpu.raiseSRException();
 			return 34;
 		}
+                
 		cpu.setSR(s);
 		return 12 + src.getTiming();
 	}

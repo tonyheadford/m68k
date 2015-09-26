@@ -66,7 +66,6 @@ public class DBcc implements InstructionHandler
 		int dis = cpu.fetchPCWordSigned();
 		int time;
 		int count = cpu.getDataRegisterWordSigned(reg) - 1;
-		cpu.setDataRegisterWord(reg, count);
 
 		if(cpu.testCC((opcode >> 8) & 0x0f))
 		{
@@ -74,7 +73,9 @@ public class DBcc implements InstructionHandler
 			time = 12;
 		}
 		else
-		{
+		{   
+			// only decrease the reg is the condition is not met!!!!!
+			cpu.setDataRegisterWord(reg, count);
 			if(count == -1)
 			{
 				// counter expired

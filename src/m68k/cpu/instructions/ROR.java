@@ -188,7 +188,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x80;
 		}
@@ -212,7 +212,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x8000;
 		}
@@ -236,7 +236,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x80000000;
 		}
@@ -248,7 +248,8 @@ public class ROR implements InstructionHandler
 
 	protected int ror_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64 not 32
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
@@ -257,7 +258,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x80;
 		}
@@ -270,7 +271,8 @@ public class ROR implements InstructionHandler
 
 	protected int ror_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64 not 32
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
@@ -279,7 +281,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x8000;
 		}
@@ -292,7 +294,8 @@ public class ROR implements InstructionHandler
 
 	protected int ror_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		// shift count is mode 64
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
@@ -301,7 +304,7 @@ public class ROR implements InstructionHandler
 		for(int s= 0; s < shift; s++)
 		{
 			last_out = d & 0x01;
-			d >>= 1;
+			d >>>= 1;
 			if(last_out != 0)
 				d |= 0x80000000;
 		}
@@ -317,7 +320,7 @@ public class ROR implements InstructionHandler
 		int v = op.getWord();
 		int last_out = v & 0x01;
 
-		v >>= 1;
+		v >>>= 1;
 		if(last_out != 0)
 			v |= 0x8000;
 

@@ -177,6 +177,8 @@ public class ROXL implements InstructionHandler
 
 	protected int roxl_byte_imm(int opcode)
 	{
+		//  the state of the X cflag BEFORE each shift is moved into the lsb after each shift. Also, check for 0 count rotate if roxr reg (and not imm)
+		//  also if roxl reg, the shift count is mod 64 not 32 finally, cond code reg is set directly here
 		int shift = (opcode >> 9) & 0x07;
 		if(shift == 0)
 			shift = 8;
@@ -184,18 +186,31 @@ public class ROXL implements InstructionHandler
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x80;
+			last_out = d & 0x80;                    // bit rotated out before ths shift
 			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			if (xflag)
+				d |= 1;                             // if xflag was set before the shift, set LSB
+			if(last_out != 0)                       // bit goes to xflag
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x00ff;
+		d &= 0xff;
 		cpu.setDataRegisterByte(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Byte);
+		if (xflag)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;                  // Z flag set if result is 0
+		if((d & 0x80)!=0)
+			maskFlags+=Cpu.N_FLAG;                  // N flag for result (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
@@ -208,18 +223,31 @@ public class ROXL implements InstructionHandler
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x8000;
+			last_out = d & 0x8000;                 // bit rotated out before ths shift
 			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			if (xflag)
+				d |= 1;                             // if xflag was set before the shift, set LSB
+			if(last_out != 0)                       // bit goes to xflag
+				xflag=true;
+			else
+				xflag=false;
 		}
 		d &= 0x0000ffff;
 		cpu.setDataRegisterWord(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Word);
+		if (xflag)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
@@ -231,83 +259,158 @@ public class ROXL implements InstructionHandler
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
-
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags;                                  // there is no 0 rotate count here
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x80000000;
+			last_out = d & 0x80000000;              // bit rotated out before ths shift
 			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			if (xflag)
+				d |= 1;                             // if xflag was set before the shift, set LSB
+			if(last_out != 0)                       // bit goes to xflag
+				xflag=true;
+			else
+				xflag=false;
 		}
 		cpu.setDataRegisterLong(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Long);
+		if (xflag)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x80000000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + shift + shift;
 	}
 
 	protected int roxl_byte_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterByte(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x80;
-			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			last_out = d & 0x80;                    // state of last bit befrre rotate
+			d <<= 1;                               
+			if (xflag)                              // X flag was set before the rotate
+				d |= 1;                             // so set it in LSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x00ff;
+		d &= 0xff;
 		cpu.setDataRegisterByte(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Byte);
+		if (shift!=0)                                   // X flags in unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+			else
+				maskFlags=0;                            // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags +=Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x80)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
 	protected int roxl_word_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterWord(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x8000;
-			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			last_out = d & 0x8000;                    // state of last bit befrre rotate
+			d <<= 1;                               
+			if (xflag)                              // X flag was set before the rotate
+				d |= 1;                             // so set it in LSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
-		d &= 0x0000ffff;
+		d &= 0xffff;
 		cpu.setDataRegisterWord(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Word);
+		if (shift!=0)                                   // X flags is unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+			else
+				maskFlags=0;                            // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags +=Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d == 0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((d & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 6 + shift + shift;
 	}
 
 	protected int roxl_long_reg(int opcode)
 	{
-		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int shift = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 63;
 
 		int reg = (opcode & 0x07);
 		int d = cpu.getDataRegisterLong(reg);
 
-		int last_out = 0;
+		int last_out;
+		boolean xflag=cpu.isFlagSet(Cpu.X_FLAG);        // state of the X flag
+		int maskFlags=xflag?Cpu.X_FLAG:0;               // value of X flag at start of operation
 		for(int s= 0; s < shift; s++)
 		{
-			last_out = d & 0x80000000;
-			d <<= 1;
-			if(last_out != 0)
-				d |= 1;
+			last_out = d & 0x80000000;              // state of last bit before rotate
+			d <<= 1;                               
+			if (xflag)                              // X flag was set before the rotate
+				d |= 1;                             // so set it in LSB
+			if(last_out != 0)                       // now set new state of X flag according to last bit moved out
+				xflag=true;
+			else
+				xflag=false;
 		}
 		cpu.setDataRegisterLong(reg, d);
-
-		cpu.calcFlags(InstructionType.ROXL, shift, last_out, d, Size.Long);
+		if (shift!=0)                                   // X flags is unaffected by a 0 count rotate
+		{
+			if (xflag)
+				maskFlags=Cpu.X_FLAG + Cpu.C_FLAG;		// if last bit was 1, set flags accordingly
+			else
+				maskFlags = 0;  	                          // these flags aren't set
+		}
+		else
+		{
+			if (maskFlags!=0)
+				maskFlags += Cpu.C_FLAG;                 //  rotate count : c flag = state of x flag
+		}
+		if (d==0)
+			maskFlags += Cpu.Z_FLAG;
+		if((d & 0x80000000) != 0)
+			maskFlags += Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + shift + shift;
 	}
 
@@ -315,13 +418,22 @@ public class ROXL implements InstructionHandler
 	{
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07),Size.Word);
 		int v = op.getWord();
-
 		int last_out = v & 0x8000;
 		v <<= 1;
-		if(last_out != 0)
-			v |= 1;
+		if(cpu.isFlagSet(Cpu.X_FLAG))
+			v |= 0x01;
+
 		op.setWord(v);
-		cpu.calcFlags(InstructionType.ROXL, 1, last_out, v, Size.Word);
+		int maskFlags;
+		if (last_out!=0)
+			maskFlags=Cpu.X_FLAG+Cpu.C_FLAG;        // if last bit was 1, set flags accordingly
+		else
+			maskFlags=0;                            // these flags aren't set
+		if ((v&0xffff)==0)
+			maskFlags+=Cpu.Z_FLAG;
+		if((v & 0x8000)!=0)
+			maskFlags+=Cpu.N_FLAG;                      // N flag (the V flag is always 0)
+		cpu.setCCRegister(maskFlags);
 		return 8 + op.getTiming();
 	}
 

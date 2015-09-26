@@ -171,7 +171,7 @@ public class ADDX implements InstructionHandler
 		int s = cpu.getDataRegisterWordSigned((opcode & 0x07));
 		int d = cpu.getDataRegisterWordSigned((opcode >> 9) & 0x07);
 		int r = s + d + (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
-		cpu.setDataRegisterByte((opcode >> 9) & 0x07, r);
+		cpu.setDataRegisterWord((opcode >> 9) & 0x07, r);
 		cpu.calcFlags(InstructionType.ADDX, s, d, r, Size.Word);
 		return 4;
 	}
