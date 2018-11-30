@@ -40,9 +40,6 @@ public class MC68000 extends CpuCore implements InstructionSet
 		unknown = new UNKNOWN(this);
 		loaded_ops = 0;
 		loadInstructionSet();
-
-		//TODO: change this to logging
-		System.out.println("MC68000: Loaded " + loaded_ops + " instructions");
 	}
 
 	public int execute()
@@ -58,11 +55,8 @@ public class MC68000 extends CpuCore implements InstructionSet
 		}
 		else
 		{
-			// Illegal Instruction
-			System.err.format("Illegal instruction $%04x at $%x\n", opcode, currentInstructionAddress);
-			raiseException(4);
-			return 34;
-			// throw new IllegalArgumentException("Invalid opcode: 0x" + Integer.toHexString(opcode));
+			reg_pc = currentInstructionAddress;
+			return unknown.execute(opcode);
 		}
 	}
 
