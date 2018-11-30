@@ -63,14 +63,17 @@ public abstract class CpuCore implements Cpu
 
 	public void reset()
 	{
-		//TODO: this has to be sent to all external devices - called by RESET instruction
-		//and during initialization (is this correct ?)
-
+		//NOTE: called during initialization
 		reg_ssp = memory.readLong(0);
 		addr_regs[7] = reg_ssp;
 		reg_pc = memory.readLong(4);
 		//supervisor mode, interrupts enabled
 		reg_sr = 0x2700;
+	}
+
+	@Override
+	public void resetExternal() {
+		//NOTE: this has to be sent to all external devices - called by RESET instruction
 	}
 
 	public void stop()

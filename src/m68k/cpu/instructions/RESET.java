@@ -42,7 +42,7 @@ public class RESET implements InstructionHandler
 			{
 				if(cpu.isSupervisorMode())
 				{
-					cpu.reset();
+					cpu.resetExternal();
 					return 132;
 				}
 				else
