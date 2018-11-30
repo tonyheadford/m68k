@@ -39,6 +39,7 @@ public interface Cpu
 
 	public void setAddressSpace(AddressSpace memory);
 	public void reset();
+	public void resetExternal();
 	public void stop();
 	public int execute();
 	

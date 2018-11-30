@@ -63,14 +63,17 @@ public abstract class CpuCore implements Cpu
 
 	public void reset()
 	{
-		//TODO: this has to be sent to all external devices - called by RESET instruction
-		//and during initialization (is this correct ?)
-
+		//NOTE: called during initialization
 		reg_ssp = memory.readLong(0);
 		addr_regs[7] = reg_ssp;
 		reg_pc = memory.readLong(4);
 		//supervisor mode, interrupts enabled
 		reg_sr = 0x2700;
+	}
+
+	@Override
+	public void resetExternal() {
+		//NOTE: this has to be sent to all external devices - called by RESET instruction
 	}
 
 	public void stop()
@@ -297,6 +300,7 @@ public abstract class CpuCore implements Cpu
 		{
 			case ADD:	//ADD, ADDI, ADDQ
 			{
+				boolean Zm = (result & sz.mask()) == 0;
 				if((Sm && Dm && !Rm) || (!Sm && !Dm && Rm))
 				{
 					reg_sr |= V_FLAG;
@@ -315,7 +319,7 @@ public abstract class CpuCore implements Cpu
 					reg_sr &= ~(C_FLAG | X_FLAG);
 				}
 
-				if(result == 0)
+				if(Zm)
 				{
 					reg_sr |= Z_FLAG;
 				}
