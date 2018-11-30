@@ -300,6 +300,7 @@ public abstract class CpuCore implements Cpu
 		{
 			case ADD:	//ADD, ADDI, ADDQ
 			{
+				boolean Zm = (result & sz.mask()) == 0;
 				if((Sm && Dm && !Rm) || (!Sm && !Dm && Rm))
 				{
 					reg_sr |= V_FLAG;
@@ -318,7 +319,7 @@ public abstract class CpuCore implements Cpu
 					reg_sr &= ~(C_FLAG | X_FLAG);
 				}
 
-				if(result == 0)
+				if(Zm)
 				{
 					reg_sr |= Z_FLAG;
 				}

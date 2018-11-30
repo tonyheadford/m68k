@@ -31,12 +31,14 @@ public enum Size
 	private final int byte_count;
 	private final String ext;
 	private final int msb;
+	private final int mask;
 
 	private Size(int num_bytes, String ext, int msb)
 	{
 		byte_count = num_bytes;
 		this.ext = ext;
 		this.msb = msb;
+		this.mask = (msb*2)-1;
 	}
 
 	public final int byteCount()
@@ -52,5 +54,9 @@ public enum Size
 	public final int msb()
 	{
 		return msb;
+	}
+
+	public long mask() {
+		return mask;
 	}
 }
