@@ -1726,7 +1726,9 @@ public abstract class CpuCore implements Cpu
 
 		public void setLong(int value)
 		{
-			writeMemoryLong(address, value);
+			//swap word-write order, lsw first
+			writeMemoryWord(address + 2, value & 0xFFFF);
+			writeMemoryWord(address, (value >> 16) & 0xFFFF);
 		}
 
 		public boolean isSR()
