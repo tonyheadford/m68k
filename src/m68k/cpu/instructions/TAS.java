@@ -28,6 +28,8 @@ import m68k.cpu.*;
 */
 public class TAS implements InstructionHandler
 {
+	public static boolean EMULATE_BROKEN_TAS;
+
 	protected final Cpu cpu;
 
 	public TAS(Cpu cpu)
@@ -90,7 +92,9 @@ public class TAS implements InstructionHandler
 		}
 		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
 
-		op.setByte(v | 0x80);
+		if(!EMULATE_BROKEN_TAS) {
+			op.setByte(v | 0x80);
+		}
 
 		return (op.isRegisterMode() ? 4 : 14 + op.getTiming());
 	}
