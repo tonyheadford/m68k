@@ -27,7 +27,7 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
 
     public void setUp() {
         //create 1kb of memory for the cpu
-        bus = new MemorySpace(1){
+        bus = new MemorySpace(1) {
             @Override
             public void writeWord(int addr, int value) {
                 wordWrites.put(addr, value);
@@ -42,7 +42,7 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
         wordWrites.clear();
     }
 
-    public void testLswWrittenFirst(){
+    public void testLswWrittenFirst() {
         int lsw = 0x2222;
         int msw = 0x1111;
         int value = msw << 16 | lsw;

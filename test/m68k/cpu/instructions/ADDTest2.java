@@ -6,7 +6,6 @@ package m68k.cpu.instructions;
  * Federico Berti
  * <p>
  * Copyright 2018
- *
  */
 
 import junit.framework.TestCase;

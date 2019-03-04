@@ -7,10 +7,6 @@ import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * ${FILE}
  * <p>
@@ -35,8 +31,8 @@ public class TasTest extends TestCase {
     }
 
 
-// 0100 1010 1100 0000
-    public void testTasOk(){
+    // 0100 1010 1100 0000
+    public void testTasOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -47,7 +43,7 @@ public class TasTest extends TestCase {
         Assert.assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasBroken(){
+    public void testTasBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);

@@ -30,66 +30,63 @@ import m68k.memory.MemorySpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class ADDTest extends TestCase
-{
-	AddressSpace bus;
-	Cpu cpu;
+public class ADDTest extends TestCase {
+    AddressSpace bus;
+    Cpu cpu;
 
-	public void setUp()
-	{
-		bus = new MemorySpace(1);	//create 1kb of memory for the cpu
-		cpu = new MC68000();
-		cpu.setAddressSpace(bus);
-		cpu.reset();
-		cpu.setAddrRegisterLong(7, 0x200);
-	}
+    public void setUp() {
+        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+        cpu = new MC68000();
+        cpu.setAddressSpace(bus);
+        cpu.reset();
+        cpu.setAddrRegisterLong(7, 0x200);
+    }
 
-	public void testADD()
-	{
-		cpu.setPC(4);
-		cpu.setDataRegisterByte(0, 0x40);
-		cpu.setDataRegisterByte(1, 0x80);
-		bus.writeWord(4, 0xd001);	// add.b d1,d0
-		int ticks = cpu.execute();
-		assertEquals(6, cpu.getPC());
-		assertEquals(0xc0, cpu.getDataRegisterByte(0));
-		assertEquals(0x80, cpu.getDataRegisterByte(1));
-		assertEquals(4, ticks);
-		assertFalse(cpu.isFlagSet(Cpu.C_FLAG));
-		assertFalse(cpu.isFlagSet(Cpu.V_FLAG));
-		assertFalse(cpu.isFlagSet(Cpu.Z_FLAG));
-		assertTrue(cpu.isFlagSet(Cpu.N_FLAG));
-		assertFalse(cpu.isFlagSet(Cpu.X_FLAG));
+    public void testADD() {
+        cpu.setPC(4);
+        cpu.setDataRegisterByte(0, 0x40);
+        cpu.setDataRegisterByte(1, 0x80);
+        bus.writeWord(4, 0xd001);    // add.b d1,d0
+        int ticks = cpu.execute();
+        assertEquals(6, cpu.getPC());
+        assertEquals(0xc0, cpu.getDataRegisterByte(0));
+        assertEquals(0x80, cpu.getDataRegisterByte(1));
+        assertEquals(4, ticks);
+        assertFalse(cpu.isFlagSet(Cpu.C_FLAG));
+        assertFalse(cpu.isFlagSet(Cpu.V_FLAG));
+        assertFalse(cpu.isFlagSet(Cpu.Z_FLAG));
+        assertTrue(cpu.isFlagSet(Cpu.N_FLAG));
+        assertFalse(cpu.isFlagSet(Cpu.X_FLAG));
 
-		cpu.setPC(4);
-		cpu.setDataRegisterWord(0, 0x8000);
-		cpu.setDataRegisterWord(1, 0x8500);
-		bus.writeWord(4, 0xd041);	// add.w d1,d0
-		ticks = cpu.execute();
-		assertEquals(6, cpu.getPC());
-		assertEquals("d0", 0x0500, cpu.getDataRegisterWord(0));
-		assertEquals("d1", 0x8500, cpu.getDataRegisterWord(1));
-		assertEquals(4, ticks);
-		assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
-		assertTrue("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
-		assertFalse("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
-		assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
-		assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
+        cpu.setPC(4);
+        cpu.setDataRegisterWord(0, 0x8000);
+        cpu.setDataRegisterWord(1, 0x8500);
+        bus.writeWord(4, 0xd041);    // add.w d1,d0
+        ticks = cpu.execute();
+        assertEquals(6, cpu.getPC());
+        assertEquals("d0", 0x0500, cpu.getDataRegisterWord(0));
+        assertEquals("d1", 0x8500, cpu.getDataRegisterWord(1));
+        assertEquals(4, ticks);
+        assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
+        assertTrue("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
+        assertFalse("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
+        assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
+        assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
 
 
-		cpu.setPC(4);
-		cpu.setDataRegisterLong(0, 0xfffffffc);
-		cpu.setDataRegisterLong(1, 0x04);
-		bus.writeWord(4, 0xd081);	// add.l d1,d0
-		ticks = cpu.execute();
-		assertEquals(6, cpu.getPC());
-		assertEquals("d0", 0, cpu.getDataRegisterLong(0));
-		assertEquals("d1", 0x04, cpu.getDataRegisterWord(1));
-		assertEquals(6, ticks);
-		assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
-		assertFalse("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
-		assertTrue("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
-		assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
-		assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
-	}
+        cpu.setPC(4);
+        cpu.setDataRegisterLong(0, 0xfffffffc);
+        cpu.setDataRegisterLong(1, 0x04);
+        bus.writeWord(4, 0xd081);    // add.l d1,d0
+        ticks = cpu.execute();
+        assertEquals(6, cpu.getPC());
+        assertEquals("d0", 0, cpu.getDataRegisterLong(0));
+        assertEquals("d1", 0x04, cpu.getDataRegisterWord(1));
+        assertEquals(6, ticks);
+        assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
+        assertFalse("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
+        assertTrue("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
+        assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
+        assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
+    }
 }

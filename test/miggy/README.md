@@ -1,6 +1,8 @@
-package m68k.memory;
+These tests were originally part of Miggy.
+See miggy-src.zip
 
-import junit.framework.TestCase;
+Unless noted:
+Copyright (c) 2008-2010, Tony Headford
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -26,35 +28,3 @@ import junit.framework.TestCase;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MemorySpaceTest extends TestCase {
-    public void testCreate() {
-        AddressSpace bus = new MemorySpace(4);
-        assertEquals(4096, bus.size());
-
-        bus = new MemorySpace(32);
-        assertEquals(32768, bus.size());
-    }
-
-    public void testMemory() {
-        AddressSpace bus = new MemorySpace(1);
-        bus.writeByte(4, 0x55);
-        assertEquals(0x55000000, bus.readLong(4));
-        assertEquals(0x5500, bus.readWord(4));
-        assertEquals(0x55, bus.readByte(4));
-
-        bus.writeWord(4, 0x1234);
-        assertEquals(0x12340000, bus.readLong(4));
-        assertEquals(0x1234, bus.readWord(4));
-        assertEquals(0x12, bus.readByte(4));
-        assertEquals(0x34, bus.readByte(5));
-
-        bus.writeLong(4, 0x98765432);
-        assertEquals(0x98765432, bus.readLong(4));
-        assertEquals(0x9876, bus.readWord(4));
-        assertEquals(0x5432, bus.readWord(6));
-        assertEquals(0x98, bus.readByte(4));
-        assertEquals(0x76, bus.readByte(5));
-        assertEquals(0x54, bus.readByte(6));
-        assertEquals(0x32, bus.readByte(7));
-    }
-}
