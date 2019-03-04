@@ -141,7 +141,7 @@ public class MOVEP implements InstructionHandler
 	{
 		int dis = cpu.fetchPCWordSigned();
 		int address = cpu.getAddrRegisterLong(opcode & 0x07) + dis;
-		int val = cpu.getDataRegisterWord((opcode >> 9) & 0x07);
+		int val = cpu.getDataRegisterLong((opcode >> 9) & 0x07);
 		cpu.writeMemoryByte(address, (val >>> 24) & 0xff);
 		cpu.writeMemoryByte(address + 2, (val >>> 16) & 0xff);
 		cpu.writeMemoryByte(address + 4, (val >>> 8) & 0xff);
