@@ -379,16 +379,16 @@ public abstract class CpuCore implements Cpu
 			{
 				//params are different here!
 				if(src != 0)	// shift count
-				{
-					if(dst != 0)	// last bit out
-					{
-						reg_sr |= (C_FLAG | X_FLAG);
-					}
-					else
-					{
-						reg_sr &= ~(C_FLAG | X_FLAG);
-					}
-				}
+                {
+                    if(dst != 0)	// last bit out
+                    {
+                        reg_sr |= (C_FLAG | X_FLAG);
+                    } else {
+                        reg_sr &= ~(C_FLAG | X_FLAG);
+                    }
+                } else {
+                    reg_sr &= ~(C_FLAG);
+                }
 
 				if(result == 0)
 				{
@@ -424,16 +424,16 @@ public abstract class CpuCore implements Cpu
 			{
 				//params are different here!
 				if(src != 0)	// shift count
-				{
-					if(dst != 0)	// last bit out
-					{
-						reg_sr |= (C_FLAG | X_FLAG);
-					}
-					else
-					{
-						reg_sr &= ~(C_FLAG | X_FLAG);
-					}
-				}
+                {
+                    if(dst != 0)	// last bit out
+                    {
+                        reg_sr |= (C_FLAG | X_FLAG);
+                    } else {
+                        reg_sr &= ~(C_FLAG | X_FLAG);
+                    }
+                } else {
+                    reg_sr &= ~(C_FLAG);
+                }
 
 				if(result == 0)
 				{
@@ -504,16 +504,16 @@ public abstract class CpuCore implements Cpu
 			case ROXR:
 			{
 				if(src > 0)	//shift count
-				{
-					if(dst != 0)	//last bit out
-					{
-						reg_sr |= (C_FLAG | X_FLAG);
-					}
-					else
-					{
-						reg_sr &= ~(C_FLAG | X_FLAG);
-					}
-				}
+                {
+                    if(dst != 0)	//last bit out
+                    {
+                        reg_sr |= (C_FLAG | X_FLAG);
+                    } else {
+                        reg_sr &= ~(C_FLAG | X_FLAG);
+                    }
+                } else {
+                    reg_sr &= ~(C_FLAG);
+                }
 
 				if(result == 0)
 				{
@@ -635,16 +635,16 @@ public abstract class CpuCore implements Cpu
 			case ROR:
 			{
 				if(src > 0)	//shift count
-				{
-					if(dst != 0)	//last bit out
-					{
-						reg_sr |= C_FLAG;
-					}
-					else
-					{
-						reg_sr &= ~(C_FLAG);
-					}
-				}
+                {
+                    if(dst != 0)	//last bit out
+                    {
+                        reg_sr |= C_FLAG;
+                    } else {
+                        reg_sr &= ~(C_FLAG);
+                    }
+                } else {
+                    reg_sr &= ~(C_FLAG);
+                }
 
 				if(result == 0)
 				{
