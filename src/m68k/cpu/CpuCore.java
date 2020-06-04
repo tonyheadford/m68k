@@ -295,17 +295,15 @@ public abstract class CpuCore implements Cpu
 		boolean Sm = (src & sz.msb()) != 0;
 		boolean Dm = (dst & sz.msb()) != 0;
 		boolean Rm = (result & sz.msb()) != 0;
+		boolean Zm = (result & sz.mask()) == 0;
+//		boolean Zm = result == 0;
 
-		switch(type)
-		{
-			case ADD:	//ADD, ADDI, ADDQ
+		switch (type) {
+			case ADD:    //ADD, ADDI, ADDQ
 			{
-				boolean Zm = (result & sz.mask()) == 0;
-				if((Sm && Dm && !Rm) || (!Sm && !Dm && Rm))
-				{
+				if ((Sm && Dm && !Rm) || (!Sm && !Dm && Rm)) {
 					reg_sr |= V_FLAG;
-				}
-				else
+				} else
 				{
 					reg_sr &= ~(V_FLAG);
 				}
@@ -350,26 +348,19 @@ public abstract class CpuCore implements Cpu
 					reg_sr &= ~(V_FLAG);
 				}
 
-				if((Sm && Dm) || (!Rm && Dm) || (Sm && !Rm))
-				{
+				if ((Sm && Dm) || (!Rm && Dm) || (Sm && !Rm)) {
 					reg_sr |= (C_FLAG | X_FLAG);
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(C_FLAG | X_FLAG);
 				}
 
-				if(result != 0)
-				{
+				if (!Zm) {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(N_FLAG);
 				}
 				break;
@@ -380,27 +371,23 @@ public abstract class CpuCore implements Cpu
 				//params are different here!
 				if(src != 0)	// shift count
                 {
-                    if(dst != 0)	// last bit out
-                    {
-                        reg_sr |= (C_FLAG | X_FLAG);
-                    } else {
-                        reg_sr &= ~(C_FLAG | X_FLAG);
-                    }
-                } else {
-                    reg_sr &= ~(C_FLAG);
-                }
-
-				if(result == 0)
-				{
-					reg_sr |= Z_FLAG;
+					if (dst != 0)    // last bit out
+					{
+						reg_sr |= (C_FLAG | X_FLAG);
+					} else {
+						reg_sr &= ~(C_FLAG | X_FLAG);
+					}
+				} else {
+					reg_sr &= ~(C_FLAG);
 				}
-				else
-				{
+
+				if (Zm) {
+					reg_sr |= Z_FLAG;
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else
@@ -425,27 +412,23 @@ public abstract class CpuCore implements Cpu
 				//params are different here!
 				if(src != 0)	// shift count
                 {
-                    if(dst != 0)	// last bit out
-                    {
-                        reg_sr |= (C_FLAG | X_FLAG);
-                    } else {
-                        reg_sr &= ~(C_FLAG | X_FLAG);
-                    }
-                } else {
-                    reg_sr &= ~(C_FLAG);
-                }
-
-				if(result == 0)
-				{
-					reg_sr |= Z_FLAG;
+					if (dst != 0)    // last bit out
+					{
+						reg_sr |= (C_FLAG | X_FLAG);
+					} else {
+						reg_sr &= ~(C_FLAG | X_FLAG);
+					}
+				} else {
+					reg_sr &= ~(C_FLAG);
 				}
-				else
-				{
+
+				if (Zm) {
+					reg_sr |= Z_FLAG;
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else
@@ -461,17 +444,13 @@ public abstract class CpuCore implements Cpu
 
 			case CMP:	// CMP, CMPA, CMPI CMPM
 			{
-				if(result == 0)
-				{
+				if (Zm) {
 					reg_sr |= Z_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if((!Sm && Dm && !Rm) || (Sm && !Dm && Rm))
-				{
+				if ((!Sm && Dm && !Rm) || (Sm && !Dm && Rm)) {
 					reg_sr |= V_FLAG;
 				}
 				else
@@ -505,27 +484,23 @@ public abstract class CpuCore implements Cpu
 			{
 				if(src > 0)	//shift count
                 {
-                    if(dst != 0)	//last bit out
-                    {
-                        reg_sr |= (C_FLAG | X_FLAG);
-                    } else {
-                        reg_sr &= ~(C_FLAG | X_FLAG);
-                    }
-                } else {
-                    reg_sr &= ~(C_FLAG);
-                }
-
-				if(result == 0)
-				{
-					reg_sr |= Z_FLAG;
+					if (dst != 0)    //last bit out
+					{
+						reg_sr |= (C_FLAG | X_FLAG);
+					} else {
+						reg_sr &= ~(C_FLAG | X_FLAG);
+					}
+				} else {
+					reg_sr &= ~(C_FLAG);
 				}
-				else
-				{
+
+				if (Zm) {
+					reg_sr |= Z_FLAG;
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else
@@ -541,19 +516,14 @@ public abstract class CpuCore implements Cpu
 			case EOR:
 			case MOVE:
 			case NOT:
-			case OR:
-			{
-				if(result == 0)
-				{
+			case OR: {
+				if (Zm) {
 					reg_sr |= Z_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else
@@ -564,28 +534,21 @@ public abstract class CpuCore implements Cpu
 				reg_sr &= ~(V_FLAG | C_FLAG);
 				break;
 			}
-			case NEG:
-			{
-				if(Sm && Rm)
-				{
+			case NEG: {
+				if (Sm && Rm) {
 					reg_sr |= V_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(V_FLAG);
 				}
 
-				if(result == 0)
-				{
+				if (Zm) {
 					reg_sr |= Z_FLAG;
 					reg_sr &= ~(X_FLAG | C_FLAG);
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(Z_FLAG);
 					reg_sr |= (X_FLAG | C_FLAG);
 				}
-				if(Rm)
+				if (Rm)
 				{
 					reg_sr |= N_FLAG;
 				}
@@ -605,28 +568,17 @@ public abstract class CpuCore implements Cpu
 				{
 					reg_sr &= ~(V_FLAG);
 				}
-				if(Sm || Rm)
-				{
+				if (Sm || Rm) {
 					reg_sr |= (X_FLAG | C_FLAG);
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(X_FLAG | C_FLAG);
 				}
-				if(result == 0)
-				{
-					reg_sr |= Z_FLAG;
-				}
-				else
-				{
+				if (!Zm) {
 					reg_sr &= ~(Z_FLAG);
 				}
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(N_FLAG);
 				}
 				break;
@@ -636,27 +588,23 @@ public abstract class CpuCore implements Cpu
 			{
 				if(src > 0)	//shift count
                 {
-                    if(dst != 0)	//last bit out
-                    {
-                        reg_sr |= C_FLAG;
-                    } else {
-                        reg_sr &= ~(C_FLAG);
-                    }
-                } else {
-                    reg_sr &= ~(C_FLAG);
-                }
-
-				if(result == 0)
-				{
-					reg_sr |= Z_FLAG;
+					if (dst != 0)    //last bit out
+					{
+						reg_sr |= C_FLAG;
+					} else {
+						reg_sr &= ~(C_FLAG);
+					}
+				} else {
+					reg_sr &= ~(C_FLAG);
 				}
-				else
-				{
+
+				if (Zm) {
+					reg_sr |= Z_FLAG;
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else
@@ -669,19 +617,14 @@ public abstract class CpuCore implements Cpu
 				break;
 			}
 
-			case SUB:
-			{
-				if(result == 0)
-				{
+			case SUB: {
+				if (Zm) {
 					reg_sr |= Z_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if((!Sm && Dm && !Rm) || (Sm && !Dm && Rm))
-				{
+				if ((!Sm && Dm && !Rm) || (Sm && !Dm && Rm)) {
 					reg_sr |= V_FLAG;
 				}
 				else
@@ -709,19 +652,14 @@ public abstract class CpuCore implements Cpu
 				break;
 			}
 
-			case SUBX:
-			{
-				if(result != 0)
-				{
+			case SUBX: {
+				if (!Zm) {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if((!Sm && Dm && !Rm) || (Sm && !Dm && Rm))
-				{
+				if ((!Sm && Dm && !Rm) || (Sm && !Dm && Rm)) {
 					reg_sr |= V_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(V_FLAG);
 				}
 
@@ -746,19 +684,14 @@ public abstract class CpuCore implements Cpu
 			}
                             
 			// swap also affects the SR
-			case SWAP:
-			{
-				if(result == 0)
-				{
+			case SWAP: {
+				if (Zm) {
 					reg_sr |= Z_FLAG;
-				}
-				else
-				{
+				} else {
 					reg_sr &= ~(Z_FLAG);
 				}
 
-				if(Rm)
-				{
+				if (Rm) {
 					reg_sr |= N_FLAG;
 				}
 				else

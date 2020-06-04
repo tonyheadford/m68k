@@ -50,6 +50,28 @@ public class ADDTest2 extends TestCase {
         testADD_byte_zeroFlag(cpu, true, 0x0001_FFFE, 0x0001_0000);
     }
 
+    public void testADDX_byte_zeroFlag1() {
+        bus.writeWord(4, 0xD502); // addx.b   d2,d2
+        testADD_byte_zeroFlag(cpu, cpu.isFlagSet(Cpu.Z_FLAG), 0xFFFF_FF80, 0xFFFF_FF00);
+    }
+
+    public void testADDX_byte_zeroFlag2() {
+        bus.writeWord(4, 0xD502); // addx.b   d2,d2
+        cpu.setFlags(Cpu.Z_FLAG);
+        testADD_byte_zeroFlag(cpu, cpu.isFlagSet(Cpu.Z_FLAG), 0xFFFF_FF80, 0xFFFF_FF00);
+    }
+
+    public void testADDX_word_zeroFlag1() {
+        bus.writeWord(4, 0xD542); // addx.w   d2,d2
+        testADD_word_zeroFlag(cpu, cpu.isFlagSet(Cpu.Z_FLAG), 0xFFFF_8000, 0xFFFF_0000);
+    }
+
+    public void testADDX_word_zeroFlag2() {
+        bus.writeWord(4, 0xD542); // addx.w   d2,d2
+        cpu.setFlags(Cpu.Z_FLAG);
+        testADD_word_zeroFlag(cpu, cpu.isFlagSet(Cpu.Z_FLAG), 0xFFFF_8000, 0xFFFF_0000);
+    }
+
     private void testADD_byte_zeroFlag(Cpu cpu, boolean expectedZFlag, long d2_pre, long d2_post) {
         cpu.setPC(4);
         cpu.setDataRegisterLong(2, (int) d2_pre);

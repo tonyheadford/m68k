@@ -587,16 +587,14 @@ public class MOVEM implements InstructionHandler
 		int bit = 1;
 		int regcount = 0;
 		int start = address + 2;
-		int oldreg = address & 0xffff;
+		int oldreg = start & 0xffff;
 
 		//assumes a7 is first bit
-		for(int n = 0; n < 8; n++)
-		{
-			if((reglist & bit) != 0)
-			{
+		for (int n = 0; n < 8; n++) {
+			if ((reglist & bit) != 0) {
 				start -= 2;
-				if (reg == 7 - n)                       	// if the EA register itself is also moved, use initial value
-					cpu.writeMemoryWord(start,oldreg);		// see comment at beginning of file
+				if (reg == 7 - n)                        // if the EA register itself is also moved, use initial value
+					cpu.writeMemoryWord(start, oldreg);        // see comment at beginning of file
 				else
 					cpu.writeMemoryWord(start, cpu.getAddrRegisterWord(7 - n));
 				regcount++;
@@ -651,24 +649,21 @@ public class MOVEM implements InstructionHandler
 		return regcount;
 	}
 
-	protected final int putMultipleLongPreDec(int reg, int reglist, int address)
-	{
+	protected final int putMultipleLongPreDec(int reg, int reglist, int address) {
 		int bit = 1;
 		int regcount = 0;
 
 		int start = address + 4; // avoid double decrease
-        
-		int oldreg = address;		// the old value of the address resister used as EA, see comment at beginning of file
+
+		int oldreg = start;        // the old value of the address resister used as EA, see comment at beginning of file
 		//assumes a7 is first bit
-		for(int n = 0; n < 8; n++)
-		{
-			if((reglist & bit) != 0)
-			{
+		for (int n = 0; n < 8; n++) {
+			if ((reglist & bit) != 0) {
 				start -= 4;
-				if (reg == 7-n)                         	// if the EA register itself is also moved, use initial value
-                    writeMemoryLongSwapped(start, oldreg);
+				if (reg == 7 - n)                            // if the EA register itself is also moved, use initial value
+					writeMemoryLongSwapped(start, oldreg);
 				else
-                    writeMemoryLongSwapped(start, cpu.getAddrRegisterLong(7 - n));
+					writeMemoryLongSwapped(start, cpu.getAddrRegisterLong(7 - n));
 				regcount++;
 			}
 			bit <<= 1;

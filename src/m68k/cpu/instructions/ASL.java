@@ -292,18 +292,17 @@ public class ASL implements InstructionHandler
 		int msb;
 		int last_out = 0;
 		int msb_changed = 0;
-		for(int s= 0; s < shift; s++)
-		{
+		for(int s= 0; s < shift; s++) {
 			last_out = d & 0x8000;
 			d <<= 1;
 			msb = d & 0x8000;
-			if(msb != last_out)
+			if (msb != last_out)
 				msb_changed = 1;
 		}
 		d &= 0x0000ffff;
 		cpu.setDataRegisterWord(reg, d);
 
-		cpu.calcFlagsParam(InstructionType.ASL, shift, last_out, d, msb_changed, Size.Byte);
+		cpu.calcFlagsParam(InstructionType.ASL, shift, last_out, d, msb_changed, Size.Word);
 		return 6 + shift + shift;
 	}
 
