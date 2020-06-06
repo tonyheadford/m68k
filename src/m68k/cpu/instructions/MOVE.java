@@ -164,18 +164,28 @@ public class MOVE implements InstructionHandler
 	protected final int move_long(int opcode)
 	{
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Long);
-		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode  >> 9) & 0x07, Size.Long);
+		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode >> 9) & 0x07, Size.Long);
 		int s = src.getLong();
-		dst.setLong(s);
+		setLong(dst, s);
 		cpu.calcFlags(InstructionType.MOVE, s, s, s, Size.Long);
 		return LongExecutionTime[src.index()][dst.index()];
 	}
 
-	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
-	{
+	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz) {
 		DisassembledOperand src = cpu.disassembleSrcEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
 		DisassembledOperand dst = cpu.disassembleDstEA(address + 2 + src.bytes, (opcode >> 6) & 0x07, (opcode >> 9) & 0x07, sz);
 
 		return new DisassembledInstruction(address, opcode, "move" + sz.ext(), src, dst);
+	}
+
+	private void setLong(Operand dst, int s) {
+		if (!(dst instanceof CpuCore.AddressRegisterPreDecOperand)) {
+			dst.setLong(s);
+		} else {
+			//move.l + pre-dec: word writes order is inverted
+			int address = dst.getComputedAddress();
+			cpu.writeMemoryWord(address + 2, s & 0xFFFF);
+			cpu.writeMemoryWord(address, (s >> 16) & 0xFFFF);
+		}
 	}
 }

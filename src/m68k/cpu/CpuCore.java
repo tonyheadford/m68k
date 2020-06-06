@@ -1590,26 +1590,22 @@ public abstract class CpuCore implements Cpu
 			return address;
 		}
 
-		public int index()
-		{
+		public int index() {
 			return index;
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return new StringBuilder(5).append("(a").append(regNumber).append(")+").toString();
 		}
 	}
 
-	class AddressRegisterPreDecOperand implements Operand
-	{
+	public class AddressRegisterPreDecOperand implements Operand {
 		protected int regNumber;
 		protected Size size;
 		protected int address;
 		protected final int index = 4;
 
-		public void init(int param, Size sz)
-		{
+		public void init(int param, Size sz) {
 			regNumber = param;
 			size = sz;
 
@@ -1647,30 +1643,23 @@ public abstract class CpuCore implements Cpu
 			return readMemoryWordSigned(address);
 		}
 
-		public void setByte(int value)
-		{
+		public void setByte(int value) {
 			writeMemoryByte(address, value);
 		}
 
-		public void setWord(int value)
-		{
+		public void setWord(int value) {
 			writeMemoryWord(address, value);
 		}
 
-		public void setLong(int value)
-		{
-			//swap word-write order, lsw first
-			writeMemoryWord(address + 2, value & 0xFFFF);
-			writeMemoryWord(address, (value >> 16) & 0xFFFF);
+		public void setLong(int value) {
+			writeMemoryLong(address, value);
 		}
 
-		public boolean isSR()
-		{
+		public boolean isSR() {
 			return false;
 		}
 
-		public boolean isRegisterMode()
-		{
+		public boolean isRegisterMode() {
 			return false;
 		}
 

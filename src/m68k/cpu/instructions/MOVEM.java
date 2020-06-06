@@ -661,9 +661,9 @@ public class MOVEM implements InstructionHandler
 			if ((reglist & bit) != 0) {
 				start -= 4;
 				if (reg == 7 - n)                            // if the EA register itself is also moved, use initial value
-					writeMemoryLongSwapped(start, oldreg);
+					cpu.writeMemoryLong(start, oldreg);
 				else
-					writeMemoryLongSwapped(start, cpu.getAddrRegisterLong(7 - n));
+					cpu.writeMemoryLong(start, cpu.getAddrRegisterLong(7 - n));
 				regcount++;
 			}
 			bit <<= 1;
@@ -674,7 +674,7 @@ public class MOVEM implements InstructionHandler
 			if((reglist & bit) != 0)
 			{
 				start -= 4;
-                writeMemoryLongSwapped(start, cpu.getDataRegisterLong(7 - n));
+				cpu.writeMemoryLong(start, cpu.getDataRegisterLong(7 - n));
 				regcount++;
 			}
 			bit <<= 1;
@@ -683,10 +683,4 @@ public class MOVEM implements InstructionHandler
 		cpu.setAddrRegisterLong(reg, start);
 		return regcount;
 	}
-
-    private void writeMemoryLongSwapped(int address, int value) {
-        //swap word-write order, lsw first
-        cpu.writeMemoryWord(address + 2, value & 0xFFFF);
-        cpu.writeMemoryWord(address, (value >> 16) & 0xFFFF);
-    }
 }
