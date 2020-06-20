@@ -26,21 +26,32 @@ import m68k.memory.AddressSpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public interface Cpu
-{
-	public static final int C_FLAG = 1;
-	public static final int V_FLAG = 2;
-	public static final int Z_FLAG = 4;
-	public static final int N_FLAG = 8;
-	public static final int X_FLAG = 16;
+public interface Cpu {
+	public static final int C_FLAG_BITS = 0;
+	public static final int V_FLAG_BITS = 1;
+	public static final int Z_FLAG_BITS = 2;
+	public static final int N_FLAG_BITS = 3;
+	public static final int X_FLAG_BITS = 4;
+	public static final int C_FLAG = 1 << C_FLAG_BITS;
+	public static final int V_FLAG = 1 << V_FLAG_BITS;
+	public static final int Z_FLAG = 1 << Z_FLAG_BITS;
+	;
+	public static final int N_FLAG = 1 << N_FLAG_BITS;
+	;
+	public static final int X_FLAG = 1 << X_FLAG_BITS;
+	;
 	public static final int INTERRUPT_FLAGS_MASK = 0x0700;
 	public static final int SUPERVISOR_FLAG = 0x2000;
 	public static final int TRACE_FLAG = 0x8000;
 
 	public void setAddressSpace(AddressSpace memory);
+
 	public void reset();
+
 	public void resetExternal();
+
 	public void stop();
+
 	public int execute();
 	
 	// data registers

@@ -21,7 +21,7 @@ public class SBCDTest extends BasicSetup {
 
         assertEquals("Check result", 0x0098, SystemModel.CPU.getDataRegister(0));
         assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
+        assertTrue("Check N", SystemModel.CPU.isSet(CpuFlag.N));
         assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
         assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
         assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
@@ -39,7 +39,7 @@ public class SBCDTest extends BasicSetup {
 
         assertEquals("Check result", 0x0199, SystemModel.MEM.peek(codebase + 98, Size.Word));
         assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
+        assertTrue("Check N", SystemModel.CPU.isSet(CpuFlag.N));
         assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
         assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
         assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
