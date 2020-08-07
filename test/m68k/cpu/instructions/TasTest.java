@@ -32,7 +32,7 @@ public class TasTest extends TestCase {
 
 
     // 0100 1010 1100 0000
-    public void testTasOk() {
+    public void testTasRegOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -43,7 +43,7 @@ public class TasTest extends TestCase {
         Assert.assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasBroken() {
+    public void testTasRegBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -51,6 +51,34 @@ public class TasTest extends TestCase {
 
         cpu.execute();
         int res = cpu.getDataRegisterLong(0);
+        Assert.assertEquals(1, (res & 0xFF) >> 7);
+    }
+
+    public void testTasMemOk() {
+        TAS.EMULATE_BROKEN_TAS = false;
+        int val = 0x20;
+        int memAddr = 100;
+        bus.writeWord(4, 0x4AD0);    //TAS (A0)
+        bus.writeByte(memAddr, val);
+        cpu.setPC(4);
+        cpu.setAddrRegisterLong(0, memAddr);
+
+        cpu.execute();
+        int res = bus.readByte(memAddr);
+        Assert.assertEquals(1, (res & 0xFF) >> 7);
+        Assert.assertEquals(val | 0x80, res);
+    }
+
+    public void testTasMemBroken() {
+        TAS.EMULATE_BROKEN_TAS = true;
+        bus.writeWord(4, 0x4AD0);    //TAS (A0)
+        bus.writeByte(100, 0x20);
+        cpu.setPC(4);
+        cpu.setAddrRegisterLong(0, 100);
+
+        cpu.execute();
+        int res = bus.readByte(100);
         Assert.assertEquals(0, (res & 0xFF) >> 7);
+        Assert.assertEquals(0x20, res);
     }
 }
