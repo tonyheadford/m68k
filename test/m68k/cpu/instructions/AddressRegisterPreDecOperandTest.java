@@ -1,6 +1,6 @@
 package m68k.cpu.instructions;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
