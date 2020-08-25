@@ -28,9 +28,21 @@ import m68k.cpu.instructions.*;
 */
 public class MC68000 extends CpuCore implements InstructionSet
 {
+	static {
+		initProperties();
+	}
+
+	private static void initProperties() {
+		TAS.EMULATE_BROKEN_TAS = Boolean.valueOf(System.getProperty("68k.broken.tas", "false"));
+		if(TAS.EMULATE_BROKEN_TAS){
+			System.out.println("Emulating broken TAS instruction");
+		}
+	}
+
 	protected Instruction[] i_table;
 	protected final Instruction unknown;
 	protected int loaded_ops;
+
 	public MC68000()
 	{
 		i_table = new Instruction[65536];

@@ -26,12 +26,13 @@ import m68k.cpu.*;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class TAS implements InstructionHandler
-{
+public class TAS implements InstructionHandler {
+	//EMULATE_BROKEN_TAS -> hardware where write-back to *memory* doesn't work
+	public static boolean EMULATE_BROKEN_TAS;
+
 	protected final Cpu cpu;
 
-	public TAS(Cpu cpu)
-	{
+	public TAS(Cpu cpu) {
 		this.cpu = cpu;
 	}
 
@@ -80,17 +81,17 @@ public class TAS implements InstructionHandler
 		{
 			cpu.clrFlags(Cpu.Z_FLAG);
 		}
-		if((v & 0x080) != 0)
-		{
+		if ((v & 0x080) != 0) {
 			cpu.setFlags(Cpu.N_FLAG);
-		}
-		else
-		{
+		} else {
 			cpu.clrFlags(Cpu.N_FLAG);
 		}
 		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
 
-		op.setByte(v | 0x80);
+		boolean writeBack = !EMULATE_BROKEN_TAS || (EMULATE_BROKEN_TAS && op.isRegisterMode());
+		if (writeBack) {
+			op.setByte(v | 0x80);
+		}
 
 		return (op.isRegisterMode() ? 4 : 14 + op.getTiming());
 	}
