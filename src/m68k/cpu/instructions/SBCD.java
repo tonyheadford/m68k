@@ -2,6 +2,8 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 
+import static m68k.cpu.Cpu.*;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -83,20 +85,18 @@ public class SBCD implements InstructionHandler
 		}
 	}
 
-	protected final int sbcd_dr(int opcode)
-	{
+	protected final int sbcd_dr(int opcode) {
 		int sreg = (opcode & 0x07);
 		int dreg = (opcode >> 9) & 0x07;
 		int s = cpu.getDataRegisterByte(sreg);
 		int d = cpu.getDataRegisterByte(dreg);
 
-		int result = doCalc(s, d);
+		int result = calc(cpu, s, d);
 		cpu.setDataRegisterByte(dreg, result);
 		return 6;
 	}
 
-	protected final int sbcd_ar(int opcode)
-	{
+	protected final int sbcd_ar(int opcode) {
 		int sreg = (opcode & 0x07);
 		int dreg = (opcode >> 9) & 0x07;
 		cpu.decrementAddrRegister(sreg, 1);
@@ -104,55 +104,48 @@ public class SBCD implements InstructionHandler
 		int s = cpu.readMemoryByte(cpu.getAddrRegisterLong(sreg));
 		int d = cpu.readMemoryByte(cpu.getAddrRegisterLong(dreg));
 
-		int result = doCalc(s, d);
+		int result = calc(cpu, s, d);
 		cpu.writeMemoryByte(cpu.getAddrRegisterLong(dreg), result);
 		return 18;
 	}
 
-	protected final int doCalc(int s, int d)
-	{
+	/**
+	 * Code and research courtesy of flamewing
+	 * http://gendev.spritesmind.net/forum/viewtopic.php?f=2&t=1964
+	 * https://github.com/flamewing/68k-bcd-verifier
+	 * <p>
+	 * computes the undefined N,V flags
+	 */
+	public static final int calc(Cpu cpu, int yy, int xx) {
 		int x = (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
-		int c;
+		int z = (cpu.isFlagSet(Cpu.Z_FLAG) ? 1 : 0);
+		int c = (cpu.isFlagSet(Cpu.C_FLAG) ? 1 : 0);
+		int dd = (xx - yy - x) & 0xFF;
+		// Normal carry computation for subtraction:
+		// (sm & ~dm) | (rm & ~dm) | (sm & rm)
+		int bc = ((~xx & yy) | (dd & ~xx) | (dd & yy)) & 0x88;
+		int corf = (bc - (bc >> 2)) & 0xFF;
+		int rr = (dd - corf) & 0xFF;
+		// Compute flags.
+		// Carry has two parts: normal carry for subtraction
+		// (computed above) OR'ed with normal carry for
+		// subtraction with corf:
+		// (sm & ~dm) | (rm & ~dm) | (sm & rm)
+		// but simplified because sm = 0 and ~sm = 1 for corf:
+		x = c = ((bc | (~dd & rr)) >> 7) & 0xFF;
+		// Normal overflow computation for subtraction with corf:
+		// (~sm & dm & ~rm) | (sm & ~dm & rm)
+		// but simplified because sm = 0 and ~sm = 1 for corf:
+		int v = ((dd & ~rr) >> 7) & 0xFF;
+		;
+		// Accumulate zero flag:
+		z = z & ((rr == 0) ? 1 : 0);
+		int n = (rr >> 7) & 0xFF;
 
-		int lo = (d & 0x0f) - (s & 0x0f) - x;
-		if(lo < 0)
-		{
-			lo += 10;
-			c = 1;
-		}
-		else
-		{
-			c = 0;
-		}
-
-		int hi = ((d >> 4) & 0x0f) - ((s >> 4) & 0x0f) - c;
-		if(hi < 0)
-		{
-			hi += 10;
-			c = 1;
-		}
-		else
-		{
-			c = 0;
-		}
-
-		int result = (hi << 4) + lo;
-
-		if(c != 0)
-		{
-			cpu.setFlags(Cpu.X_FLAG | Cpu.C_FLAG);
-		}
-		else
-		{
-			cpu.clrFlags(Cpu.X_FLAG | Cpu.C_FLAG);
-		}
-
-		if(result != 0)
-		{
-			cpu.clrFlags(Cpu.Z_FLAG);
-		}
-
-		return result;
+		int ccr = ((x & 1) << X_FLAG_BITS) | ((n & 1) << N_FLAG_BITS) | ((z & 1) << Z_FLAG_BITS)
+				| ((v & 1) << V_FLAG_BITS) | ((c & 1) << C_FLAG_BITS);
+		cpu.setCCRegister(ccr);
+		return rr;
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, boolean data_reg_mode)

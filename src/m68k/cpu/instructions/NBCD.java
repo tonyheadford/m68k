@@ -54,63 +54,21 @@ public class NBCD implements InstructionHandler
 			if(ea_mode == 1)
 				continue;
 
-			for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-			{
-				if(ea_mode == 7 && ea_reg > 1)
+			for (int ea_reg = 0; ea_reg < 8; ea_reg++) {
+				if (ea_mode == 7 && ea_reg > 1)
 					break;
 				is.addInstruction(base + (ea_mode << 3) + ea_reg, i);
 			}
 		}
 	}
 
-	protected final int nbcd(int opcode)
-	{
+	protected final int nbcd(int opcode) {
 		int mode = (opcode >> 3) & 0x07;
 		int reg = (opcode & 0x07);
 		Operand op = cpu.resolveDstEA(mode, reg, Size.Byte);
 		int s = op.getByte();
-
-		int x = (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
-		int c;
-
-		int lo = 10 - (s & 0x0f) - x;
-		if(lo < 10)
-		{
-			c = 1;
-		}
-		else
-		{
-			lo = 0;
-			c = 0;
-		}
-
-		int hi = 10 - ((s >> 4) & 0x0f) - c;
-		if(hi < 10)
-		{
-			c = 1;
-		}
-		else
-		{
-			c = 0;
-			hi = 0;
-		}
-
-		int result = (hi << 4) + lo;
-
-		if(c != 0)
-		{
-			cpu.setFlags(Cpu.X_FLAG | Cpu.C_FLAG);
-		}
-		else
-		{
-			cpu.clrFlags(Cpu.X_FLAG | Cpu.C_FLAG);
-		}
-
-		if(result != 0)
-		{
-			cpu.clrFlags(Cpu.Z_FLAG);
-		}
-
+		// Note: equivalent to sbcd(cpu, xx, 0);
+		int result = SBCD.calc(cpu, s, 0);
 		op.setByte(result);
 
 		return (op.isRegisterMode() ? 6 : 8);
