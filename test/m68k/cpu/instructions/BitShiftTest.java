@@ -1,6 +1,6 @@
 package m68k.cpu.instructions;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import miggy.BasicSetup;
 
 import static miggy.SystemModel.CPU;
