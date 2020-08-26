@@ -82,7 +82,6 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
         Assert.assertEquals(msw, second.getValue().intValue());
     }
 
-    //TODO
     public void testLswWrittenFirst_MOVEM() {
         int lsw = 0x2222;
         int msw = 0x1111;
@@ -106,7 +105,7 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
 
         Assert.assertEquals(wordWrites.size(), 4);
 
-        int firstWordPos = startPos - 4;
+        int firstWordPos = startPos - 2;
         Iterator<Map.Entry<Integer, Integer>> i = wordWrites.entrySet().iterator();
         Map.Entry<Integer, Integer> first = i.next();
         Assert.assertEquals(firstWordPos, first.getKey().intValue());
