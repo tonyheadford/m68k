@@ -81,4 +81,40 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
         Assert.assertEquals(firstWordPos, second.getKey().intValue());
         Assert.assertEquals(msw, second.getValue().intValue());
     }
+
+    //TODO
+    public void testLswWrittenFirst_MOVEM() {
+        int lsw = 0x2222;
+        int msw = 0x1111;
+        int value = msw << 16 | lsw;
+        int startPos = 0x104;
+        int endPos = startPos - 8; // 2 longs
+        int valuePos = startPos - 4;
+
+        bus.writeLong(4, 0x48e1_8100);    //48e1 8100                movem.l  d0/d7,-(a1)
+        cpu.setPC(4);
+        cpu.setDataRegisterLong(7, value);
+        cpu.setAddrRegisterLong(1, startPos);
+
+        wordWrites.clear();
+        cpu.execute();
+
+        Assert.assertEquals(cpu.getAddrRegisterLong(1), endPos);
+
+        long res = bus.readLong(valuePos);
+        Assert.assertEquals(res, value);
+
+        Assert.assertEquals(wordWrites.size(), 4);
+
+        int firstWordPos = startPos - 4;
+        Iterator<Map.Entry<Integer, Integer>> i = wordWrites.entrySet().iterator();
+        Map.Entry<Integer, Integer> first = i.next();
+        Assert.assertEquals(firstWordPos, first.getKey().intValue());
+        Assert.assertEquals(lsw, first.getValue().intValue());
+
+        int secondWordPos = firstWordPos - 2;
+        Map.Entry<Integer, Integer> second = i.next();
+        Assert.assertEquals(secondWordPos, second.getKey().intValue());
+        Assert.assertEquals(msw, second.getValue().intValue());
+    }
 }

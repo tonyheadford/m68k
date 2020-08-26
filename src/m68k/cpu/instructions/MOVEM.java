@@ -683,4 +683,11 @@ public class MOVEM implements InstructionHandler
 		cpu.setAddrRegisterLong(reg, start);
 		return regcount;
 	}
+
+	//TODO
+	private void writeMemoryLongSwapped(int address, int value) {
+		//swap word-write order, lsw first
+		cpu.writeMemoryWord(address + 2, value & 0xFFFF);
+		cpu.writeMemoryWord(address, (value >> 16) & 0xFFFF);
+	}
 }
