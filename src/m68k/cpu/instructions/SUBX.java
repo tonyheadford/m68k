@@ -224,7 +224,7 @@ public class SUBX implements InstructionHandler
 		int d = cpu.readMemoryLong(cpu.getAddrRegisterLong(rx));
 		int r = d - s - (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
 		cpu.writeMemoryLong(cpu.getAddrRegisterLong(rx), r);
-		cpu.calcFlags(InstructionType.SUBX, s, d, r, Size.Byte);
+		cpu.calcFlags(InstructionType.SUBX, s, d, r, Size.Long);
 		return 30;
 	}
 
