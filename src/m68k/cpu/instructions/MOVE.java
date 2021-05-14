@@ -144,28 +144,26 @@ public class MOVE implements InstructionHandler
 	protected final int move_byte(int opcode)
 	{
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Byte);
-		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode  >> 9) & 0x07, Size.Byte);
 		int s = src.getByte();
+		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode >> 9) & 0x07, Size.Byte);
 		dst.setByte(s);
 		cpu.calcFlags(InstructionType.MOVE, s, s, s, Size.Byte);
 		return ShortExecutionTime[src.index()][dst.index()];
 	}
 
-	protected final int move_word(int opcode)
-	{
+	protected final int move_word(int opcode) {
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Word);
-		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode  >> 9) & 0x07, Size.Word);
 		int s = src.getWord();
+		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode >> 9) & 0x07, Size.Word);
 		dst.setWord(s);
 		cpu.calcFlags(InstructionType.MOVE, s, s, s, Size.Word);
 		return ShortExecutionTime[src.index()][dst.index()];
 	}
 
-	protected final int move_long(int opcode)
-	{
+	protected final int move_long(int opcode) {
 		Operand src = cpu.resolveSrcEA((opcode >> 3) & 0x07, opcode & 0x07, Size.Long);
-		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode >> 9) & 0x07, Size.Long);
 		int s = src.getLong();
+		Operand dst = cpu.resolveDstEA((opcode >> 6) & 0x07, (opcode >> 9) & 0x07, Size.Long);
 		setLong(dst, s);
 		cpu.calcFlags(InstructionType.MOVE, s, s, s, Size.Long);
 		return LongExecutionTime[src.index()][dst.index()];
