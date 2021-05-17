@@ -137,16 +137,13 @@ public class BTST implements InstructionHandler
 		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 7;
 		bit = 1 << bit;
 		// memory destination
-		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
+		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
 		int val = op.getByte();
 
 		// Z_FLAG set according to original value
-		if((val & bit) != 0)
-		{
+		if ((val & bit) != 0) {
 			cpu.clrFlags(Cpu.Z_FLAG);
-		}
-		else
-		{
+		} else {
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 
