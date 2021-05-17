@@ -190,9 +190,9 @@ public class ADDX implements InstructionHandler
 	{
 		int rx = (opcode >> 9) & 0x07;
 		int ry = (opcode & 0x07);
-		cpu.decrementAddrRegister(rx, 1);
 		cpu.decrementAddrRegister(ry, 1);
 		int s = cpu.readMemoryByteSigned(cpu.getAddrRegisterLong(ry));
+		cpu.decrementAddrRegister(rx, 1);
 		int d = cpu.readMemoryByteSigned(cpu.getAddrRegisterLong(rx));
 		int r = s + d + (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
 		cpu.writeMemoryByte(cpu.getAddrRegisterLong(rx), r);
@@ -200,13 +200,12 @@ public class ADDX implements InstructionHandler
 		return 18;
 	}
 
-	protected int addx_word_mem(int opcode)
-	{
+	protected int addx_word_mem(int opcode) {
 		int rx = (opcode >> 9) & 0x07;
 		int ry = (opcode & 0x07);
-		cpu.decrementAddrRegister(rx, 2);
 		cpu.decrementAddrRegister(ry, 2);
 		int s = cpu.readMemoryWordSigned(cpu.getAddrRegisterLong(ry));
+		cpu.decrementAddrRegister(rx, 2);
 		int d = cpu.readMemoryWordSigned(cpu.getAddrRegisterLong(rx));
 		int r = s + d + (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
 		cpu.writeMemoryWord(cpu.getAddrRegisterLong(rx), r);
@@ -214,13 +213,12 @@ public class ADDX implements InstructionHandler
 		return 18;
 	}
 
-	protected int addx_long_mem(int opcode)
-	{
+	protected int addx_long_mem(int opcode) {
 		int rx = (opcode >> 9) & 0x07;
 		int ry = (opcode & 0x07);
-		cpu.decrementAddrRegister(rx, 4);
 		cpu.decrementAddrRegister(ry, 4);
 		int s = cpu.readMemoryLong(cpu.getAddrRegisterLong(ry));
+		cpu.decrementAddrRegister(rx, 4);
 		int d = cpu.readMemoryLong(cpu.getAddrRegisterLong(rx));
 		int r = s + d + (cpu.isFlagSet(Cpu.X_FLAG) ? 1 : 0);
 		cpu.writeMemoryLong(cpu.getAddrRegisterLong(rx), r);
