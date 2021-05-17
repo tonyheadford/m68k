@@ -55,7 +55,7 @@ public class ANDI_TO_CCR implements InstructionHandler
 	protected int andi_word(int opcode)
 	{
 		//the three upper bytes of the ccr must always be 0
-		int s = cpu.fetchPCWord() & 0x1f;           // mask out all but 5 lower bits
+		int s = cpu.fetchPCWord() & Cpu.CCR_MASK;           // mask out all but 5 lower bits
 		cpu.setSR(cpu.getSR() & (s | 0xff00));
 		return 8;                                   // i'm NOT sure about this timing
 	}
