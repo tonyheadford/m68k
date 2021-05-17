@@ -42,6 +42,11 @@ public class STOP implements InstructionHandler
 			{
 				int data = cpu.fetchPCWord();
 
+				/**
+				 * If the bit of the immediate data
+				 * corresponding to the S-bit is clear (i.e., user mode selected),
+				 * execution of the STOP instruction will cause a privilege violation.
+				 */
 				if(!cpu.isSupervisorMode() || (data & Cpu.SUPERVISOR_FLAG) == 0)
 				{
 					// privilege violation
