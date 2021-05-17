@@ -1180,10 +1180,16 @@ public abstract class CpuCore implements Cpu
 
 	//effective address handling
 	public void incrementAddrRegister(int reg, int numBytes) {
+		if (reg == 7 && numBytes == 1) {
+			numBytes = 2;
+		}
 		addr_regs[reg] += numBytes;
 	}
 
 	public void decrementAddrRegister(int reg, int numBytes) {
+		if (reg == 7 && numBytes == 1) {
+			numBytes = 2;
+		}
 		addr_regs[reg] -= numBytes;
 	}
 
