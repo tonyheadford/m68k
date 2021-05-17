@@ -226,7 +226,7 @@ public abstract class CpuCore implements Cpu
 
 	public void setCCRegister(int value)
 	{
-		reg_sr = (reg_sr & 0xff00) | (value & 0x00ff);
+		reg_sr = (reg_sr & 0xff00) | (value & CCR_MASK);
 	}
 
 	public void setSR(int value)
@@ -245,7 +245,7 @@ public abstract class CpuCore implements Cpu
 				addr_regs[7] = reg_usp;
 			}
 		}
-		reg_sr = value;
+		reg_sr = value & SR_MASK;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public abstract class CpuCore implements Cpu
 	 */
 	public void setSR2(int value) {
 		// old value of SR, this will be in supermode
-		reg_sr = value;                            // new value of SR, could be user mode or super mode
+		reg_sr = value & SR_MASK;                            // new value of SR, could be user mode or super mode
 		if ((reg_sr & SUPERVISOR_FLAG) == 0)    // we changed back to user mode,change stack pointer
 		{
 			reg_ssp = addr_regs[7];                // keep supervisor stack pointer
@@ -863,7 +863,7 @@ public abstract class CpuCore implements Cpu
 			//switch back to user mode
 			if ((reg_sr & SUPERVISOR_FLAG) != 0) {
 				//restore PC and status regs
-				reg_sr = popWord();
+				setSR(popWord());
 				reg_pc = popLong();
 
 				//switch stacks

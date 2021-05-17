@@ -1,5 +1,6 @@
 package miggy.cpu.instructions.move;
 
+import m68k.cpu.Cpu;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
@@ -18,7 +19,7 @@ public class MOVE_2_CCRTest extends BasicSetup {
 
         int time = SystemModel.CPU.execute();
 
-        assertEquals("Check SR", 0xff15, SystemModel.CPU.getSR());
+        assertEquals("Check SR", 0xff15 & Cpu.SR_MASK, SystemModel.CPU.getSR());
         assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
         assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
         assertTrue("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
