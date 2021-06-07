@@ -56,11 +56,9 @@ public class ANDI_TO_SR implements InstructionHandler
 
 	protected int andi_word(int opcode)
 	{
-		// mask out bits 5,6,7 & 11 : they are always 0!
 		int s = cpu.fetchPCWordSigned();
 		if(cpu.isSupervisorMode())
 		{
-			s &= 0xf71f;                           // mask out bits 5,6,7 & 11 : they are always 0!
 			cpu.setSR(cpu.getSR()& s);
 		}
 		else

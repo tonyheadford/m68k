@@ -1,5 +1,6 @@
 package miggy.cpu.instructions.add;
 
+import m68k.cpu.Size;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
@@ -56,5 +57,48 @@ public class ADDXTest extends BasicSetup {
         assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
         assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
         assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
+    }
+
+    public void testBytePreDec() {
+        int addr = 0x800;
+        int a2Exp = addr - 2;
+        SystemModel.MEM.poke(a2Exp, 0x12345678, Size.Long);
+        setInstruction(0xd50a);   //addx.b  -(A2), -(A2)
+        SystemModel.CPU.setAddrRegister(2, addr);
+        SystemModel.CPU.setCCR((byte) 0x1f);
+
+        SystemModel.CPU.execute();
+
+        assertEquals("Check result", a2Exp, SystemModel.CPU.getAddrRegisterLong(2));
+        assertEquals(0x12 + 0x34 + 1, SystemModel.MEM.peek(a2Exp, Size.Byte));
+    }
+
+    public void testWordPreDec() {
+        int addr = 0x800;
+        int anExp = addr - 4;
+        SystemModel.MEM.poke(anExp, 0x12345678, Size.Long);
+        setInstruction(0xdb4d);   //addx.w  -(A5), -(A5)
+        SystemModel.CPU.setAddrRegister(5, addr);
+        SystemModel.CPU.setCCR((byte) 0x1f);
+
+        SystemModel.CPU.execute();
+
+        assertEquals("Check result", anExp, SystemModel.CPU.getAddrRegisterLong(5));
+        assertEquals(0x1234 + 0x5678 + 1, SystemModel.MEM.peek(anExp, Size.Word));
+    }
+
+    public void testLongPreDec() {
+        int addr = 0x800;
+        int anExp = addr - 8;
+        SystemModel.MEM.poke(anExp, 0x12345678, Size.Long);
+        SystemModel.MEM.poke(anExp + 4, 0x87654321, Size.Long);
+        setInstruction(0xdd8e);   //addx.l  -(A6), -(A6)
+        SystemModel.CPU.setAddrRegister(6, addr);
+        SystemModel.CPU.setCCR((byte) 0x1f);
+
+        SystemModel.CPU.execute();
+
+        assertEquals("Check result", anExp, SystemModel.CPU.getAddrRegisterLong(6));
+        assertEquals(0x87654321 + 0x12345678 + 1, SystemModel.MEM.peek(anExp, Size.Long)); // 0x9999999A
     }
 }

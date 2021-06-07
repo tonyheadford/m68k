@@ -226,7 +226,7 @@ public abstract class CpuCore implements Cpu
 
 	public void setCCRegister(int value)
 	{
-		reg_sr = (reg_sr & 0xff00) | (value & 0x00ff);
+		reg_sr = (reg_sr & 0xff00) | (value & CCR_MASK);
 	}
 
 	public void setSR(int value)
@@ -236,35 +236,32 @@ public abstract class CpuCore implements Cpu
 		{
 			//if changing via this method don't push/pop sr and pc - this is only called by andi/eori/ori
 
-			if((value & SUPERVISOR_FLAG) != 0)
-			{
+			if ((value & SUPERVISOR_FLAG) != 0) {
 				reg_usp = addr_regs[7];
 				addr_regs[7] = reg_ssp;
-			}
-			else
-			{
+			} else {
 				//switch stacks
 				reg_ssp = addr_regs[7];
 				addr_regs[7] = reg_usp;
 			}
 		}
-		reg_sr = value;
+		reg_sr = value & SR_MASK;
 	}
 
 	/**
 	 * Set the SR when coming from an RTE.
 	 * We might already have been IN supervisor mode when the exception was caused (eg a Trap called in supervisor mode),
 	 * so we must check the S bit we get back from the stack and possibly STAY in supervisor mode even after the RTE.
+	 *
 	 * @param value
 	 */
-	public void setSR2(int value)
-	{
+	public void setSR2(int value) {
 		// old value of SR, this will be in supermode
-		reg_sr = value;							// new value of SR, could be user mode or super mode
-		if ((reg_sr & SUPERVISOR_FLAG) == 0)	// we changed back to user mode,change stack pointer
+		reg_sr = value & SR_MASK;                            // new value of SR, could be user mode or super mode
+		if ((reg_sr & SUPERVISOR_FLAG) == 0)    // we changed back to user mode,change stack pointer
 		{
-			reg_ssp = addr_regs[7];				// keep supervisor stack pointer
-			addr_regs[7] = reg_usp ;			// get user stack pointer
+			reg_ssp = addr_regs[7];                // keep supervisor stack pointer
+			addr_regs[7] = reg_usp;            // get user stack pointer
 		}
 	}
 
@@ -862,14 +859,11 @@ public abstract class CpuCore implements Cpu
 			//save pc and status regs
 			pushLong(reg_pc);
 			pushWord(old_sr);
-		}
-		else
-		{
+		} else {
 			//switch back to user mode
-			if((reg_sr & SUPERVISOR_FLAG) != 0)
-			{
+			if ((reg_sr & SUPERVISOR_FLAG) != 0) {
 				//restore PC and status regs
-				reg_sr = popWord();
+				setSR(popWord());
 				reg_pc = popLong();
 
 				//switch stacks
@@ -1185,19 +1179,22 @@ public abstract class CpuCore implements Cpu
 	}
 
 	//effective address handling
-	public void incrementAddrRegister(int reg, int numBytes)
-	{
+	public void incrementAddrRegister(int reg, int numBytes) {
+		if (reg == 7 && numBytes == 1) {
+			numBytes = 2;
+		}
 		addr_regs[reg] += numBytes;
 	}
-	public void decrementAddrRegister(int reg, int numBytes)
-	{
+
+	public void decrementAddrRegister(int reg, int numBytes) {
+		if (reg == 7 && numBytes == 1) {
+			numBytes = 2;
+		}
 		addr_regs[reg] -= numBytes;
 	}
 
-	protected int signExtendByte(int value)
-	{
-		if((value & 0x80) == 0x80)
-		{
+	protected int signExtendByte(int value) {
+		if ((value & 0x80) == 0x80) {
 			value |= 0xffffff00;
 		}
 		else

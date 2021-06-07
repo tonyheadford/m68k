@@ -46,7 +46,6 @@ public class EORI_TO_SR implements InstructionHandler
                 int s = cpu.fetchPCWordSigned();
                 if(cpu.isSupervisorMode())
                 {
-                        s&=0xf71f;                           // mask out bits 5,6,7 & 11 : they are always 0!
                         cpu.setSR(cpu.getSR()^s);
                 }
                 else

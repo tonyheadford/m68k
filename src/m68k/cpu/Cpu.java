@@ -35,14 +35,14 @@ public interface Cpu {
 	public static final int C_FLAG = 1 << C_FLAG_BITS;
 	public static final int V_FLAG = 1 << V_FLAG_BITS;
 	public static final int Z_FLAG = 1 << Z_FLAG_BITS;
-	;
 	public static final int N_FLAG = 1 << N_FLAG_BITS;
-	;
 	public static final int X_FLAG = 1 << X_FLAG_BITS;
-	;
 	public static final int INTERRUPT_FLAGS_MASK = 0x0700;
 	public static final int SUPERVISOR_FLAG = 0x2000;
 	public static final int TRACE_FLAG = 0x8000;
+
+	int CCR_MASK = 0x1F;
+	int SR_MASK = 0xE700 | CCR_MASK; //0xe71f
 
 	public void setAddressSpace(AddressSpace memory);
 

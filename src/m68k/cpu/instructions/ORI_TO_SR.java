@@ -55,8 +55,7 @@ public class ORI_TO_SR implements InstructionHandler
         
 	protected int ori_word(int opcode)
 	{
-		// mask out bits 5,6,7 & 11 : they are always 0!;
-		int s = cpu.fetchPCWordSigned() & 0xf71f;
+		int s = cpu.fetchPCWordSigned();
 		if(cpu.isSupervisorMode())
 		{
 			cpu.setSR(cpu.getSR()|s);

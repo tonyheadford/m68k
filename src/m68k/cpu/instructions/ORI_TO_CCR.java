@@ -54,7 +54,7 @@ public class ORI_TO_CCR implements InstructionHandler
 	}
 	protected int ori_word(int opcode)
 	{
-		int s = cpu.fetchPCWordSigned() & 31;
+		int s = cpu.fetchPCWordSigned() & Cpu.CCR_MASK;
 		cpu.setSR(cpu.getSR()| s);
 		return 8;
 	}
