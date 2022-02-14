@@ -58,12 +58,12 @@ public class MC68000 extends CpuCore implements InstructionSet
 	{
 		//save the PC address
 		currentInstructionAddress = reg_pc;
-                int opcode = fetchPCWord();
-                
-		Instruction i = i_table[opcode];
-		if(i != null)
+		opcode = fetchPCWord();
+
+		instruction = i_table[opcode];
+		if(instruction != null)
 		{
-			return i.execute(opcode);
+			return instruction.execute(opcode);
 		}
 		else
 		{

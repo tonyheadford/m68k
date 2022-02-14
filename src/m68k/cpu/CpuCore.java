@@ -40,6 +40,8 @@ public abstract class CpuCore implements Cpu
 	protected Operand srcEAHandler;
 	protected Operand dstEAHandler;
 	protected int currentInstructionAddress;
+	protected int opcode;
+	protected Instruction instruction;
 	protected StringBuilder disasmBuffer;
 
 	public CpuCore()
@@ -2488,6 +2490,14 @@ public abstract class CpuCore implements Cpu
 		public int index()
 		{
 			return index;
+		}
+
+		public int getOpcode(){
+			return opcode;
+		}
+
+		public Instruction getInstruction(){
+			return instruction;
 		}
 
 		public String toString()
