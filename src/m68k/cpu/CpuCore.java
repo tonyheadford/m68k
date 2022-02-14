@@ -979,6 +979,13 @@ public abstract class CpuCore implements Cpu
 		}
 	}
 
+	public int getOpcode(){
+		return opcode;
+	}
+
+	public Instruction getInstruction(){
+		return instruction;
+	}
 
 	//memory interface
 	public int readMemoryByte(int addr)
@@ -2490,14 +2497,6 @@ public abstract class CpuCore implements Cpu
 		public int index()
 		{
 			return index;
-		}
-
-		public int getOpcode(){
-			return opcode;
-		}
-
-		public Instruction getInstruction(){
-			return instruction;
 		}
 
 		public String toString()
