@@ -73,8 +73,17 @@ public class CHK implements InstructionHandler
 		int dval = cpu.getDataRegisterWordSigned(reg);
 
 		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
-		int sval = op.getWord();
+		//the upper bound is a twos complement integer( ie. signed)
+		int sval = op.getWordSigned();
 		boolean raiseException = false;
+		/* Undocumented */
+		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
+		if(dval == 0){
+			cpu.setFlags(Cpu.Z_FLAG);
+		} else {
+			cpu.clrFlags(Cpu.Z_FLAG);
+		}
+		/* Undocumented */
 
 		if(dval < 0)
 		{
