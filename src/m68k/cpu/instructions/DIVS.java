@@ -90,6 +90,7 @@ public class DIVS implements InstructionHandler
 			{
 				//Overflow
 				cpu.setFlags(Cpu.V_FLAG);
+				cpu.clrFlags(Cpu.C_FLAG);
 			}
 			else
 			{

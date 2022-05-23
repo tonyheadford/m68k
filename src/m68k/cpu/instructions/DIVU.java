@@ -93,6 +93,7 @@ public class DIVU implements InstructionHandler
 				//Overflow
 				cpu.setFlags(Cpu.V_FLAG);
 				cpu.setFlags(Cpu.N_FLAG);   // the n flag seems to be set every time an overflow is generated
+				cpu.clrFlags(Cpu.C_FLAG);
 			}
 			else
 			{
