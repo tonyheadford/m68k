@@ -44,6 +44,9 @@ public interface Cpu {
 	int CCR_MASK = 0x1F;
 	int SR_MASK = 0xE700 | CCR_MASK; //0xe71f
 
+	//24 bits
+	int PC_MASK = 0xFF_FFFF;
+
 	public void setAddressSpace(AddressSpace memory);
 
 	public void reset();

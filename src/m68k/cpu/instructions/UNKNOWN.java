@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
-import m68k.cpu.*;
+import m68k.cpu.Cpu;
+import m68k.cpu.DisassembledInstruction;
+import m68k.cpu.Instruction;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -61,7 +63,13 @@ public class UNKNOWN implements Instruction
 
 	public DisassembledInstruction disassemble(int address, int opcode)
 	{
+		String inst = "????";
+		if((opcode & 0xf000) == 0xa000){
+			inst = "line-a";
+		} else if((opcode & 0xf000) == 0xf000){
+			inst = "line-f";
+		}
 		//allow disassembly
-		return new DisassembledInstruction(address, opcode, "????");
+		return new DisassembledInstruction(address, opcode, inst);
 	}
 }

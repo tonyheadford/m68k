@@ -26,6 +26,10 @@ package m68k.cpu;
 */
 public class DisassembledInstruction
 {
+	private static final String SPACES_20 = "                    ",
+			SPACES_15 ="               ",
+			SPACES_11 =  "           ";
+
 	public final int address;
 	public final int opcode;
 	public final int num_operands;
@@ -84,78 +88,45 @@ public class DisassembledInstruction
 
 	public void shortFormat(StringBuilder buffer)
 	{
-            
-		buffer.append(String.format("%08x   ", address));
-		switch(num_operands)
-		{
-			case 0:
-			{
-				buffer.append(instruction);
-				break;
-			}
+		final String instName = String.format("%-9s", instruction);
+		buffer.append(String.format("%08x   ", address)).append(instName);
+		switch(num_operands) {
 			case 1:
-			{
-				int ilen = instruction.length();
-				buffer.append(instruction);
-				while(ilen < 9)
-				{
-					buffer.append(" ");
-					ilen++;
-				}
 				buffer.append(op1.operand);
 				break;
-			}
 			case 2:
-			{
-				int ilen = instruction.length();
-				buffer.append(instruction);
-				while(ilen < 9)
-				{
-					buffer.append(" ");
-					ilen++;
-				}
 				buffer.append(op1.operand).append(",").append(op2.operand);
 				break;
-			}
 		}
 	}
 
 	public void formatInstruction(StringBuilder buffer)
 	{
 		buffer.append(String.format("%08x   %04x", address, opcode));
+		final String instName = String.format("%-9s", instruction);
 
 		switch(num_operands)
 		{
 			case 0:
 			{
-				// 20 spaces
-				buffer.append("                    ").append(instruction);
+				buffer.append(SPACES_20).append(instName);
 				break;
 			}
 			case 1:
 			{
 				if(op1.bytes == 2)
 				{
-					buffer.append(String.format(" %04x               ", op1.memory_read));
+					buffer.append(String.format(" %04x" + SPACES_15, op1.memory_read & 0xFFFF));
 				}
 				else if(op1.bytes == 4)
 				{
-					buffer.append(String.format(" %08x           ", op1.memory_read));
+					buffer.append(String.format(" %08x"+ SPACES_11, op1.memory_read));
 				}
 				else
 				{
-					// 20 spaces
-					buffer.append("                    ");
+					buffer.append(SPACES_20);
 				}
-
-				int ilen = instruction.length();
-				buffer.append(instruction);
-				while(ilen < 9)
-				{
-					buffer.append(" ");
-					ilen++;
-				}
-				buffer.append(op1.operand);
+				buffer.append(instName).append(op1.operand);
 				break;
 			}
 			case 2:
@@ -164,7 +135,7 @@ public class DisassembledInstruction
 
 				if(op1.bytes == 2)
 				{
-					buffer.append(String.format(" %04x", op1.memory_read));
+					buffer.append(String.format(" %04x", op1.memory_read & 0xFFFF));
 					len += 5;
 				}
 				else if(op1.bytes == 4)
@@ -175,7 +146,7 @@ public class DisassembledInstruction
 
 				if(op2.bytes == 2)
 				{
-					buffer.append(String.format(" %04x", op2.memory_read));
+					buffer.append(String.format(" %04x", op2.memory_read & 0xFFFF));
 					len += 5;
 				}
 				else if(op2.bytes == 4)
@@ -183,21 +154,10 @@ public class DisassembledInstruction
 					buffer.append(String.format(" %08x", op2.memory_read));
 					len += 9;
 				}
-
-				while(len < 21)
-				{
-					buffer.append(" ");
-					len++;
-				}
-				int ilen = instruction.length();
-				buffer.append(instruction);
-				while(ilen < 9)
-				{
-					buffer.append(" ");
-					ilen++;
-				}
-
-				buffer.append(op1.operand).append(",").append(op2.operand);
+				int spaceNum = (SPACES_20.length() - len - 1);
+				assert spaceNum > 0;
+				buffer.append(String.format(" %"+ spaceNum +"s", " "));
+				buffer.append(instName).append(op1.operand).append(",").append(op2.operand);
 				break;
 			}
 		}
