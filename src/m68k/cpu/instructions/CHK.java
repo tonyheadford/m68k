@@ -2,6 +2,7 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.OperandTiming;
 import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
@@ -102,7 +103,7 @@ public class CHK implements InstructionHandler
 		{
 			// CHK exception is vector 6
 			cpu.raiseException(6);
-			return 40;
+			return 40 + OperandTiming.getOperandTiming(op, Size.Word);
 		}
 
 		return M68kCycles.getTimingByOpcode(opcode);

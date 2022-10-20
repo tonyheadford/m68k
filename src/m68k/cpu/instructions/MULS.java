@@ -2,6 +2,7 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.OperandTiming;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -102,6 +103,11 @@ public class MULS implements InstructionHandler
 
 		cpu.setDataRegisterLong(reg, r);
 
+		/**
+		 * cycles = 38 + 2m + ea
+		 * 'm' = concatenate the 16-bit pointed by <ea> with a zero as the LSB
+		 * 'm' is the resultant number of 10 or 01 patterns in the 17-bit source.
+		 */
 		int last_bit = 0;
 		int val;
 		int count = 0;
@@ -113,7 +119,7 @@ public class MULS implements InstructionHandler
 			last_bit = val;
 			s >>= 1;
 		}
-		return 38 + (count << 1) + 4;
+		return 38 + (count << 1) + OperandTiming.getOperandTiming(op, Size.Word);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

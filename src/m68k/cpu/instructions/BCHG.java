@@ -163,8 +163,8 @@ public class BCHG implements InstructionHandler
 	protected final int bchg_dyn_long(int opcode)
 	{
 		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
-		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) &31;
-		bit =1 << bit;
+		int bitPos = cpu.getDataRegisterLong((opcode >> 9) & 0x07) &31;
+		int bit =1 << bitPos;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -185,7 +185,7 @@ public class BCHG implements InstructionHandler
 		}
 
 		op.setLong(val);
-		return M68kCycles.getTimingByOpcode(opcode);
+		return BCLR.adjustBitOpTimingDyn(op, opcode, bitPos);
 	}
 
 
@@ -219,8 +219,8 @@ public class BCHG implements InstructionHandler
 	protected final int bchg_static_long(int opcode)
 	{
 		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
-		int bit = cpu.fetchPCWord() &31;
-		bit =1 << bit;
+		int bitPos = cpu.fetchPCWord() &31;
+		int bit =1 << bitPos;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -241,7 +241,7 @@ public class BCHG implements InstructionHandler
 		}
 
 		op.setLong(val);
-		return M68kCycles.getTimingByOpcode(opcode);
+		return BCLR.adjustBitOpTiming(M68kCycles.getTimingByOpcode(opcode), bitPos);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

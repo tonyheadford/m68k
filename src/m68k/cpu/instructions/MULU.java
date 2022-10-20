@@ -2,6 +2,7 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.OperandTiming;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -99,14 +100,7 @@ public class MULU implements InstructionHandler
 		cpu.clrFlags((Cpu.V_FLAG | Cpu.C_FLAG));
 
 		cpu.setDataRegisterLong(reg, r);
-
-		int x = s;
-		x = (x & 0x5555) + ((x >> 1) & 0x5555);
-		x = (x & 0x3333) + ((x >> 2) & 0x3333);
-		x = (x & 0x0f0f) + ((x >> 4) & 0x0f0f);
-		x = (x & 0x00ff) + ((x >> 8) & 0x00ff);
-
-		return 38 + (x << 1) + 4;
+		return 38 + (Integer.bitCount(s) << 1) + OperandTiming.getOperandTiming(op, Size.Word);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

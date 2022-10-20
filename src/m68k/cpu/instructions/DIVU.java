@@ -30,6 +30,8 @@ import m68k.cpu.operand.OperandTiming;
 
 public class DIVU implements InstructionHandler
 {
+	public static boolean ACCURATE_DIV_TIMING;
+
 	protected final Cpu cpu;
 
 	public DIVU(Cpu cpu)
@@ -82,7 +84,7 @@ public class DIVU implements InstructionHandler
 		{
 			//divide by zero exception
 			cpu.raiseException(5);
-			time = 38 + OperandTiming.getOperandTiming(op, Size.Word);
+			time = 38;
 		}
 		else
 		{
@@ -124,11 +126,53 @@ public class DIVU implements InstructionHandler
 				cpu.clrFlags((Cpu.V_FLAG | Cpu.C_FLAG));
 			}
 			//worst case but less than 10% difference between best and worst cases
-			time = 140;
+			time = ACCURATE_DIV_TIMING ? getDivu68kCycles(dl, s) : 140;
 		}
 
-		return time;
+		return time + OperandTiming.getOperandTiming(op, Size.Word);
 	}
+
+/*
+ * Compute exact number of CPU cycles taken
+ * by DIVU and DIVS on a 68000 processor.
+ *
+ * Copyright (c) 2005 by Jorge Cwik, pasti@fxatari.com
+ */
+private static int getDivu68kCycles(long dividend, int divisor) {
+	int mcycles;
+	long hdivisor;
+	int i;
+
+	if (divisor == 0)
+		return 0;
+
+	// Overflow
+	if ((dividend >> 16) >= divisor)
+		return (mcycles = 5) * 2;
+
+	mcycles = 38;
+	hdivisor = ((long) divisor) << 16;
+
+	for (i = 0; i < 15; i++) {
+		long temp;
+		temp = dividend;
+
+		dividend <<= 1;
+
+		// If carry from shift
+		if (temp < 0) {
+			dividend -= hdivisor;
+		} else {
+			mcycles += 2;
+			if (dividend >= hdivisor) {
+				dividend -= hdivisor;
+				mcycles--;
+			}
+		}
+	}
+
+	return mcycles * 2;
+}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{

@@ -37,6 +37,10 @@ public class MC68000 extends CpuCore implements InstructionSet
 		if(TAS.EMULATE_BROKEN_TAS){
 			System.out.println("Emulating broken TAS instruction");
 		}
+		DIVU.ACCURATE_DIV_TIMING = Boolean.valueOf(System.getProperty("68k.accurate.div.timing", "false"));
+		if(DIVU.ACCURATE_DIV_TIMING){
+			System.out.println("Using accurate DIVU/S timing");
+		}
 	}
 
 	protected Instruction[] i_table;

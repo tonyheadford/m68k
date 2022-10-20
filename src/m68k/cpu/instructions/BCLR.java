@@ -2,6 +2,7 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.Operands;
 import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
@@ -163,8 +164,8 @@ public class BCLR implements InstructionHandler
 	protected final int bclr_dyn_long(int opcode)
 	{
 		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
-		int bit = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
-		bit =1 << bit;
+		int bitPos = cpu.getDataRegisterLong((opcode >> 9) & 0x07) & 31;
+		int bit =1 << bitPos;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
@@ -183,7 +184,7 @@ public class BCLR implements InstructionHandler
 		val &= ~bit;
 
 		op.setLong(val);
-		return M68kCycles.getTimingByOpcode(opcode);
+		return adjustBitOpTimingDyn(op, opcode, bitPos);
 	}
 
 
@@ -212,30 +213,35 @@ public class BCLR implements InstructionHandler
 		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
-	protected final int bclr_static_long(int opcode)
-	{
+	protected final int bclr_static_long(int opcode) {
 		// for memory destination, the bitnbr is MOD 8 - for data reg destination, the bitnbr is mod 32
-		int bit = cpu.fetchPCWord() & 31;
-		bit = 1 << bit;
+		int bitPos = cpu.fetchPCWord() & 31;
+		int bit = 1 << bitPos;
 
 		// data register destination
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Long);
 		int val = op.getLong();
 
 		// Z_FLAG set according to original value
-		if((val & bit) != 0)
-		{
+		if ((val & bit) != 0) {
 			cpu.clrFlags(Cpu.Z_FLAG);
-		}
-		else
-		{
+		} else {
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 		//clear the bit
 		val &= ~bit;
 
 		op.setLong(val);
-		return M68kCycles.getTimingByOpcode(opcode);
+		return adjustBitOpTiming(M68kCycles.getTimingByOpcode(opcode), bitPos);
+	}
+
+	public static int adjustBitOpTimingDyn(Operand op, int opcode, int bitShift){
+		int time = M68kCycles.getTimingByOpcode(opcode);
+		return (op instanceof Operands.DataRegisterOperand) ? adjustBitOpTiming(time, bitShift) : time;
+	}
+
+	public static int adjustBitOpTiming(int timing, int bitShift){
+		return timing - (bitShift < 0x10 ? 2 : 0);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

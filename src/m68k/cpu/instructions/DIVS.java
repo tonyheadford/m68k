@@ -2,7 +2,9 @@ package m68k.cpu.instructions;
 
 import m68k.cpu.*;
 import m68k.cpu.operand.Operand;
-import m68k.cpu.timing.M68kCycles;
+import m68k.cpu.operand.OperandTiming;
+
+import static java.lang.Math.abs;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -82,7 +84,7 @@ public class DIVS implements InstructionHandler
 		{
 			//divide by zero exception
 			cpu.raiseException(5);
-			time = 38 + M68kCycles.getTimingByOpcode(opcode);
+			time = 38;
 		}
 		else
 		{
@@ -118,11 +120,63 @@ public class DIVS implements InstructionHandler
 				cpu.clrFlags((Cpu.V_FLAG | Cpu.C_FLAG));
 			}
 			//worst case but less than 10% difference between best and worst cases
-			time = 158;
+			time = DIVU.ACCURATE_DIV_TIMING ? getDivs68kCycles(d, s) : 158;
 		}
 
-		return time;
+		return time + OperandTiming.getOperandTiming(op, Size.Word);
 
+	}
+
+	/*
+	 * Compute exact number of CPU cycles taken
+	 * by DIVU and DIVS on a 68000 processor.
+	 *
+	 * Copyright (c) 2005 by Jorge Cwik, pasti@fxatari.com
+	 */
+	private static int getDivs68kCycles(long dividend, int divisor)
+	{
+		int mcycles;
+		int aquot;
+		int i;
+
+		if( divisor == 0)
+			return 0;
+
+		mcycles = 6;
+
+		if( dividend < 0)
+			mcycles++;
+
+		// Check for absolute overflow
+		if( (abs( dividend) >> 16) >= abs( divisor))
+		{
+			return (mcycles + 2) * 2;
+		}
+
+		// Absolute quotient
+		aquot = (int) (abs( dividend) / abs( divisor));
+
+		mcycles += 55;
+
+		if( divisor >= 0)
+		{
+			if( (short)dividend >= 0)
+				mcycles--;
+			else
+				mcycles++;
+		}
+
+		// Count 15 msbits in absolute of quotient
+
+		for( i = 0; i < 15; i++)
+		{
+			if( aquot >= 0)
+				mcycles++;
+			aquot <<= 1;
+		}
+
+
+		return mcycles * 2;
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

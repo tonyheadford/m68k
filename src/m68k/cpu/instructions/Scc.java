@@ -73,21 +73,20 @@ public class Scc implements InstructionHandler
 	{
 		Operand op = cpu.resolveDstEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Byte);
 		int cc = (opcode >> 8) & 0x0f;
-		int time;
+		int time = 0;
 
 		if(cpu.testCC(cc))
 		{
 			op.setByte(0xff);
-			time = M68kCycles.getTimingByOpcode(opcode);
+			time = cc != 0 ? 2 : 0; //st doesn't add 2
 		}
 		else
 		{
 			// condition failed
 			op.setByte(0);
-			time = M68kCycles.getTimingByOpcode(opcode);
 		}
 
-		return time;
+		return time + M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode)
