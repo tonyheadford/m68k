@@ -1,6 +1,9 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -108,7 +111,7 @@ public class NOT implements InstructionHandler
 		int r = (~s) & 0xFF;
 		op.setByte(r);
 		cpu.calcFlags(InstructionType.NOT, s, 0, r, Size.Byte);
-		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int not_word(int opcode)
@@ -118,7 +121,7 @@ public class NOT implements InstructionHandler
 		int r = (~s) & 0xffff;
 		op.setWord(r);
 		cpu.calcFlags(InstructionType.NOT, s, 0, r, Size.Word);
-		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int not_long(int opcode)
@@ -128,7 +131,7 @@ public class NOT implements InstructionHandler
 		int r = ~s;
 		op.setLong(r);
 		cpu.calcFlags(InstructionType.NOT, s, 0, r, Size.Long);
-		return (op.isRegisterMode() ? 6 : 12 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

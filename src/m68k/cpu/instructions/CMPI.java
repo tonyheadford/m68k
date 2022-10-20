@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -112,7 +114,7 @@ public class CMPI implements InstructionHandler
 
 		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Byte);
 
-		return (op.isRegisterMode() ? 8 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int cmpi_word(int opcode)
@@ -125,7 +127,7 @@ public class CMPI implements InstructionHandler
 		int r = d - s;
 
 		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Word);
-		return (op.isRegisterMode() ? 8 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int cmpi_long(int opcode)
@@ -139,7 +141,7 @@ public class CMPI implements InstructionHandler
 
 		cpu.calcFlags(InstructionType.CMP, s, d, r, Size.Long);
 
-		return (op.isRegisterMode() ? 14 : 12 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

@@ -1,6 +1,9 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -323,7 +326,7 @@ public class ASR implements InstructionHandler
 
 		op.setWord(v);
 		cpu.calcFlags(InstructionType.ASR, 1, last_out, v, Size.Word);
-		return 8 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

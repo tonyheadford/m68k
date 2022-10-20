@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -116,7 +118,7 @@ public class EORI implements InstructionHandler
 		if(!dst.isSR())
 			cpu.calcFlags(InstructionType.EOR, s, d, r, Size.Byte);
 
-		return (dst.isRegisterMode() ? 8 : 12 + dst.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int eori_word(int opcode)
@@ -145,7 +147,7 @@ public class EORI implements InstructionHandler
 			cpu.calcFlags(InstructionType.EOR, s, d, r, Size.Word);
 		}
 
-		return (dst.isRegisterMode() ? 8 : 12 + dst.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int eori_long(int opcode)
@@ -156,7 +158,7 @@ public class EORI implements InstructionHandler
 		int r = s ^ d;
 		dst.setLong(r);
 		cpu.calcFlags(InstructionType.EOR, s, d, r, Size.Long);
-		return (dst.isRegisterMode() ? 16 : 20 + dst.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

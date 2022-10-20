@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -114,7 +116,7 @@ public class CLR implements InstructionHandler
 		flags |= Cpu.Z_FLAG;
 		cpu.setCCRegister(flags);
 
-		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int clr_word(int opcode)
@@ -130,7 +132,7 @@ public class CLR implements InstructionHandler
 		flags |= Cpu.Z_FLAG;
 		cpu.setCCRegister(flags);
 
-		return (op.isRegisterMode() ? 4 : 8 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int clr_long(int opcode)
@@ -146,7 +148,7 @@ public class CLR implements InstructionHandler
 		flags |= Cpu.Z_FLAG;
 		cpu.setCCRegister(flags);
 
-		return (op.isRegisterMode() ? 6 : 12 + op.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

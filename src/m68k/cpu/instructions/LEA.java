@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
 
 /*
 //  M68k - Java Amiga MachineCore

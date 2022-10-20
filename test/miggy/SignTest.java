@@ -1,5 +1,6 @@
 package miggy;
 
+import m68k.cpu.CpuUtils;
 import m68k.cpu.Size;
 import org.junit.Test;
 
@@ -66,11 +67,11 @@ public class SignTest extends BasicSetup {
     public void testSizeSignExtend() {
         int val = 0x0080;
 
-        int result = SystemModel.CPU.signExtendByte(val);
+        int result = CpuUtils.signExtendByte(val);
         assertTrue("Byte sign extended", result < 0);
 
         val = 0x8000;
-        result = SystemModel.CPU.signExtendWord(val);
+        result = CpuUtils.signExtendWord(val);
         assertTrue("Word sign extended", result < 0);
     }
 }

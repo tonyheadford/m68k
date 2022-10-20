@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -76,7 +78,7 @@ public class MOVE_TO_SR implements InstructionHandler
 		}
                 
 		cpu.setSR(s);
-		return 12 + src.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

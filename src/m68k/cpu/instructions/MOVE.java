@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.Operands;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -177,7 +179,7 @@ public class MOVE implements InstructionHandler
 	}
 
 	private void setLong(Operand dst, int s) {
-		if (!(dst instanceof CpuCore.AddressRegisterPreDecOperand)) {
+		if (!(dst instanceof Operands.AddressRegisterPreDecOperand)) {
 			dst.setLong(s);
 		} else {
 			//move.l + pre-dec: word writes order is inverted

@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -125,7 +127,7 @@ public class TST implements InstructionHandler
 		}
 		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
 
-		return 4 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 	protected final int tst_word(int opcode)
 	{
@@ -152,7 +154,7 @@ public class TST implements InstructionHandler
 		}
 		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
 
-		return 4 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 	protected final int tst_long(int opcode)
 	{
@@ -179,7 +181,7 @@ public class TST implements InstructionHandler
 		}
 		cpu.clrFlags(Cpu.C_FLAG | Cpu.V_FLAG);
 
-		return 4 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

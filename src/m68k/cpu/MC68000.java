@@ -64,6 +64,7 @@ public class MC68000 extends CpuCore implements InstructionSet
 		if(instruction != null)
 		{
 			return instruction.execute(opcode);
+//			OperandTiming.compareTiming(this, currentInstructionAddress, res);
 		}
 		else
 		{

@@ -1,6 +1,9 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -194,7 +197,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterByte(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Byte);
-		return 6 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_word_imm(int opcode)
@@ -216,7 +219,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterWord(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Word);
-		return 6 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_long_imm(int opcode)
@@ -237,7 +240,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterLong(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Long);
-		return 8 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_byte_reg(int opcode)
@@ -258,7 +261,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterByte(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Byte);
-		return 6 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_word_reg(int opcode)
@@ -279,7 +282,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterWord(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Word);
-		return 6 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_long_reg(int opcode)
@@ -299,7 +302,7 @@ public class LSL implements InstructionHandler
 		cpu.setDataRegisterLong(reg, d);
 
 		cpu.calcFlags(InstructionType.LSL, shift, last_out, d, Size.Long);
-		return 8 + shift + shift;
+		return M68kCycles.getTimingByOpcode(opcode) + shift + shift;
 	}
 
 	protected int lsl_word_mem(int opcode)
@@ -311,7 +314,7 @@ public class LSL implements InstructionHandler
 		v <<= 1;
 		op.setWord(v);
 		cpu.calcFlags(InstructionType.LSL, 1, last_out, v, Size.Word);
-		return 8 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

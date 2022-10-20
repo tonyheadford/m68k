@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -112,7 +113,7 @@ public class MULS implements InstructionHandler
 			last_bit = val;
 			s >>= 1;
 		}
-		return 38 + (count << 1);
+		return 38 + (count << 1) + 4;
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

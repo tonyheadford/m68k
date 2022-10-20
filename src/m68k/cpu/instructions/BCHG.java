@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -155,7 +157,7 @@ public class BCHG implements InstructionHandler
 			val |= bit;
 		}
 		op.setByte(val);
-		return 8 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int bchg_dyn_long(int opcode)
@@ -183,7 +185,7 @@ public class BCHG implements InstructionHandler
 		}
 
 		op.setLong(val);
-		return 8;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 
@@ -211,7 +213,7 @@ public class BCHG implements InstructionHandler
 			val |= bit;
 		}
 		op.setByte(val);
-		return 12 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int bchg_static_long(int opcode)
@@ -239,7 +241,7 @@ public class BCHG implements InstructionHandler
 		}
 
 		op.setLong(val);
-		return 12;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

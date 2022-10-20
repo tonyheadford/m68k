@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -174,7 +176,7 @@ public class SUB implements InstructionHandler
 		int d = cpu.getDataRegisterByteSigned(reg);
 		int r = d - s;
 		cpu.setDataRegisterByte(reg, r);
-		int time = 4 + src.getTiming();
+		int time = 4 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Byte);
 		return time;
 	}
@@ -186,7 +188,7 @@ public class SUB implements InstructionHandler
 		int d = dst.getByteSigned();
 		int r = d - s;
 		dst.setByte(r);
-		int time = 8 + dst.getTiming();
+		int time = 8 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Byte);
 		return time;
 	}
@@ -200,7 +202,7 @@ public class SUB implements InstructionHandler
 		int d = cpu.getDataRegisterWordSigned(reg);
 		int r = d - s;
 		cpu.setDataRegisterWord(reg, r);
-		int time = 4 + src.getTiming();
+		int time = 4 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Word);
 		return time;
 	}
@@ -212,7 +214,7 @@ public class SUB implements InstructionHandler
 		int d = dst.getWordSigned();
 		int r = d - s;
 		dst.setWord(r);
-		int time = 8 + dst.getTiming();
+		int time = 8 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Word);
 		return time;
 	}
@@ -226,7 +228,7 @@ public class SUB implements InstructionHandler
 		int d = cpu.getDataRegisterLong(reg);
 		int r = d - s;
 		cpu.setDataRegisterLong(reg, r);
-		int time = 6 + src.getTiming();
+		int time = 6 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Long);
 		return time;
 	}
@@ -238,9 +240,8 @@ public class SUB implements InstructionHandler
 		int d = dst.getLong();
 		int r = d - s;
 		dst.setLong(r);
-		int time = 12 + dst.getTiming();
 		cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Long);
-		return time;
+		return  M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

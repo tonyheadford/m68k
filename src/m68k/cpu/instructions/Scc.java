@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -76,13 +78,13 @@ public class Scc implements InstructionHandler
 		if(cpu.testCC(cc))
 		{
 			op.setByte(0xff);
-			time = (op.isRegisterMode() ? 6 : 8 + op.getTiming());
+			time = M68kCycles.getTimingByOpcode(opcode);
 		}
 		else
 		{
 			// condition failed
 			op.setByte(0);
-			time = (op.isRegisterMode() ? 4 : 8 + op.getTiming());
+			time = M68kCycles.getTimingByOpcode(opcode);
 		}
 
 		return time;

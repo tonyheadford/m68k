@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.timing.M68kCycles;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -65,7 +67,7 @@ public class ORI_TO_SR implements InstructionHandler
 			cpu.raiseSRException();
 			return 34;
 		}
-		return 8;                                   // i'm not sure this is true
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
         

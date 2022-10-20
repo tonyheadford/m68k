@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -71,7 +73,7 @@ public class NBCD implements InstructionHandler
 		int result = SBCD.calc(cpu, s, 0);
 		op.setByte(result);
 
-		return (op.isRegisterMode() ? 6 : 8);
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

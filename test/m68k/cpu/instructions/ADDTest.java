@@ -82,7 +82,7 @@ public class ADDTest extends TestCase {
         assertEquals(6, cpu.getPC());
         assertEquals("d0", 0, cpu.getDataRegisterLong(0));
         assertEquals("d1", 0x04, cpu.getDataRegisterWord(1));
-        assertEquals(6, ticks);
+        assertEquals(8, ticks);
         assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
         assertFalse("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
         assertTrue("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));

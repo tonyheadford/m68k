@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -67,7 +68,7 @@ public class ANDI_TO_SR implements InstructionHandler
 			return 34;
 		}
 		
-		return 8;                                   // i'm NOT sure about this timing
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

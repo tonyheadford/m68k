@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -57,7 +58,7 @@ public class ANDI_TO_CCR implements InstructionHandler
 		//the three upper bytes of the ccr must always be 0
 		int s = cpu.fetchPCWord() & Cpu.CCR_MASK;           // mask out all but 5 lower bits
 		cpu.setSR(cpu.getSR() & (s | 0xff00));
-		return 8;                                   // i'm NOT sure about this timing
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

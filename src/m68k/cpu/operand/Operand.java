@@ -1,4 +1,6 @@
-package m68k.cpu;
+package m68k.cpu.operand;
+
+import m68k.cpu.Size;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -26,23 +28,22 @@ package m68k.cpu;
 */
 public interface Operand
 {
-	public void init(int param, Size size);
+	void init(int param, Size size);
 
-	public int getByte();
-	public int getWord();
-	public int getLong();
+	int getByte();
+	int getWord();
+	int getLong();
 
-	public int getByteSigned();
-	public int getWordSigned();
+	int getByteSigned();
+	int getWordSigned();
 
-	public void setByte(int value);
-	public void setWord(int value);
-	public void setLong(int value);
+	void setByte(int value);
+	void setWord(int value);
+	void setLong(int value);
 
-	public boolean isRegisterMode();
-	public boolean isSR();
-	public int getTiming();
+	boolean isRegisterMode();
+	boolean isSR();
 
-	public int getComputedAddress();
-	public int index();
+	int getComputedAddress();
+	int index();
 }

@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -118,7 +120,7 @@ public class ADDQ implements InstructionHandler
 		int r = s + d;
 		dst.setByte(r);
 		cpu.calcFlags(InstructionType.ADD, s, d, r, Size.Byte);
-		return (dst.isRegisterMode() ? 4 : 8 + dst.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int addq_word(int opcode)
@@ -137,13 +139,13 @@ public class ADDQ implements InstructionHandler
 			int r = s + d;
 			dst.setWord(r);
 			cpu.calcFlags(InstructionType.ADD, s, d, r, Size.Word);
-			return (dst.isRegisterMode() ? 4 : 8 + dst.getTiming());
+			return M68kCycles.getTimingByOpcode(opcode);
 		}
 		else
 		{
 			int reg=opcode & 0x07;
 			cpu.setAddrRegisterLong(reg,cpu.getAddrRegisterLong(reg)+s);
-			return 4;
+			return M68kCycles.getTimingByOpcode(opcode);
 		}
 	}
 
@@ -163,7 +165,7 @@ public class ADDQ implements InstructionHandler
 		if(mode != 1)
 			cpu.calcFlags(InstructionType.ADD, s, d, r, Size.Long);
 
-		return (dst.isRegisterMode() ? 8 : 12 + dst.getTiming());
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

@@ -109,14 +109,4 @@ public class TestCpu extends MC68000 {
         }
         return Size.Byte;
     }
-
-    @Override
-    public int signExtendByte(int value) {
-        return super.signExtendByte(value);
-    }
-
-    @Override
-    public int signExtendWord(int value) {
-        return super.signExtendWord(value);
-    }
 }

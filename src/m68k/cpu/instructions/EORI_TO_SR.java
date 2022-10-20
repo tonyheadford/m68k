@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -54,7 +55,7 @@ public class EORI_TO_SR implements InstructionHandler
                         return 34;
                 }
 
-                return 8;                                   // i'm NOT sure about this timing
+                return M68kCycles.getTimingByOpcode(opcode);
             }
             public DisassembledInstruction disassemble(int address, int opcode)
             {

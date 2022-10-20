@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -100,10 +102,10 @@ public class CHK implements InstructionHandler
 		{
 			// CHK exception is vector 6
 			cpu.raiseException(6);
-			return 40 + op.getTiming();
+			return 40;
 		}
 
-		return 10 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

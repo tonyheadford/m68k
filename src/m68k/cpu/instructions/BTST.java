@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -147,7 +149,7 @@ public class BTST implements InstructionHandler
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 
-		return 4 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int btst_dyn_long(int opcode)
@@ -169,7 +171,7 @@ public class BTST implements InstructionHandler
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
 
-		return 6;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 
@@ -192,7 +194,7 @@ public class BTST implements InstructionHandler
 		{
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
-		return 8 + op.getTiming();
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int btst_static_long(int opcode)
@@ -214,7 +216,7 @@ public class BTST implements InstructionHandler
 		{
 			cpu.setFlags(Cpu.Z_FLAG);
 		}
-		return 10;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

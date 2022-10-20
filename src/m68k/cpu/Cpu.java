@@ -1,5 +1,6 @@
 package m68k.cpu;
 
+import m68k.cpu.operand.Operand;
 import m68k.memory.AddressSpace;
 
 /*
@@ -27,19 +28,19 @@ import m68k.memory.AddressSpace;
 //
 */
 public interface Cpu {
-	public static final int C_FLAG_BITS = 0;
-	public static final int V_FLAG_BITS = 1;
-	public static final int Z_FLAG_BITS = 2;
-	public static final int N_FLAG_BITS = 3;
-	public static final int X_FLAG_BITS = 4;
-	public static final int C_FLAG = 1 << C_FLAG_BITS;
-	public static final int V_FLAG = 1 << V_FLAG_BITS;
-	public static final int Z_FLAG = 1 << Z_FLAG_BITS;
-	public static final int N_FLAG = 1 << N_FLAG_BITS;
-	public static final int X_FLAG = 1 << X_FLAG_BITS;
-	public static final int INTERRUPT_FLAGS_MASK = 0x0700;
-	public static final int SUPERVISOR_FLAG = 0x2000;
-	public static final int TRACE_FLAG = 0x8000;
+	int C_FLAG_BITS = 0;
+	int V_FLAG_BITS = 1;
+	int Z_FLAG_BITS = 2;
+	int N_FLAG_BITS = 3;
+	int X_FLAG_BITS = 4;
+	int C_FLAG = 1 << C_FLAG_BITS;
+	int V_FLAG = 1 << V_FLAG_BITS;
+	int Z_FLAG = 1 << Z_FLAG_BITS;
+	int N_FLAG = 1 << N_FLAG_BITS;
+	int X_FLAG = 1 << X_FLAG_BITS;
+	int INTERRUPT_FLAGS_MASK = 0x0700;
+	int SUPERVISOR_FLAG = 0x2000;
+	int TRACE_FLAG = 0x8000;
 
 	int CCR_MASK = 0x1F;
 	int SR_MASK = 0xE700 | CCR_MASK; //0xe71f
@@ -47,93 +48,96 @@ public interface Cpu {
 	//24 bits
 	int PC_MASK = 0xFF_FFFF;
 
-	public void setAddressSpace(AddressSpace memory);
+	void setAddressSpace(AddressSpace memory);
 
-	public void reset();
+	void reset();
 
-	public void resetExternal();
+	void resetExternal();
 
-	public void stop();
+	void stop();
 
-	public int execute();
+	int execute();
 	
 	// data registers
-	public int getDataRegisterByte(int reg);
-	public int getDataRegisterByteSigned(int reg);
-	public int getDataRegisterWord(int reg);
-	public int getDataRegisterWordSigned(int reg);
-	public int getDataRegisterLong(int reg);
-	public void setDataRegisterByte(int reg, int value);
-	public void setDataRegisterWord(int reg, int value);
-	public void setDataRegisterLong(int reg, int value);
+	int getDataRegisterByte(int reg);
+	int getDataRegisterByteSigned(int reg);
+	int getDataRegisterWord(int reg);
+	int getDataRegisterWordSigned(int reg);
+	int getDataRegisterLong(int reg);
+	void setDataRegisterByte(int reg, int value);
+	void setDataRegisterWord(int reg, int value);
+	void setDataRegisterLong(int reg, int value);
 	// address registers
-	public int getAddrRegisterByte(int reg);
-	public int getAddrRegisterByteSigned(int reg);
-	public int getAddrRegisterWord(int reg);
-	public int getAddrRegisterWordSigned(int reg);
-	public int getAddrRegisterLong(int reg);
-	public void setAddrRegisterByte(int reg, int value);
-	public void setAddrRegisterWord(int reg, int value);
-	public void setAddrRegisterLong(int reg, int value);
+	int getAddrRegisterByte(int reg);
+	int getAddrRegisterByteSigned(int reg);
+	int getAddrRegisterWord(int reg);
+	int getAddrRegisterWordSigned(int reg);
+	int getAddrRegisterLong(int reg);
+	void setAddrRegisterByte(int reg, int value);
+	void setAddrRegisterWord(int reg, int value);
+	void setAddrRegisterLong(int reg, int value);
 	//memory interface
-	public int readMemoryByte(int addr);
-	public int readMemoryByteSigned(int addr);
-	public int readMemoryWord(int addr);
-	public int readMemoryWordSigned(int addr);
-	public int readMemoryLong(int addr);
-	public void writeMemoryByte(int addr, int value);
-	public void writeMemoryWord(int addr, int value);
-	public void writeMemoryLong(int addr, int value);
+	int readMemoryByte(int addr);
+	int readMemoryByteSigned(int addr);
+	int readMemoryWord(int addr);
+	int readMemoryWordSigned(int addr);
+	int readMemoryLong(int addr);
+	void writeMemoryByte(int addr, int value);
+	void writeMemoryWord(int addr, int value);
+	void writeMemoryLong(int addr, int value);
 	//addr reg helpers
-	public void incrementAddrRegister(int reg, int numBytes);
-	public void decrementAddrRegister(int reg, int numBytes);
+	void incrementAddrRegister(int reg, int numBytes);
+	void decrementAddrRegister(int reg, int numBytes);
 	
 	// PC reg
-	public int getPC();
-	public void setPC(int address);
+	int getPC();
+	void setPC(int address);
 	// pc fetches - for reading data following instructions and incrementing the PC afterwards
-	public int fetchPCWord();
-	public int fetchPCWordSigned();
-	public int fetchPCLong();
+	int fetchPCWord();
+	int fetchPCWordSigned();
+	int fetchPCLong();
 	// status reg
-	public boolean isSupervisorMode();
-	public int getCCRegister();
-	public int getSR();
-	public void setCCRegister(int value);
-	public void setSR(int value);
-	public void setSR2(int value);
+	boolean isSupervisorMode();
+	int getCCRegister();
+	int getSR();
+	void setCCRegister(int value);
+	void setSR(int value);
+	void setSR2(int value);
 	//flags
-	public void setFlags(int flags);
-	public void clrFlags(int flags);
-	public boolean isFlagSet(int flag);
-	public void calcFlags(InstructionType type, int s, int d, int r, Size sz);
-	public void calcFlagsParam(InstructionType type, int s, int d, int r, int extraParam, Size sz);
-	public boolean testCC(int cc);
+	void setFlags(int flags);
+	void clrFlags(int flags);
+	boolean isFlagSet(int flag);
+	void calcFlags(InstructionType type, int s, int d, int r, Size sz);
+	void calcFlagsParam(InstructionType type, int s, int d, int r, int extraParam, Size sz);
+	boolean testCC(int cc);
+	int getOpcode();
 
 	// stacks
-	public int getUSP();
-	public void setUSP(int address);
-	public int getSSP();
-	public void setSSP(int address);
-	public void pushWord(int value);
-	public void pushLong(int value);
-	public int popWord();
-	public int popLong();
+	int getUSP();
+	void setUSP(int address);
+	int getSSP();
+	void setSSP(int address);
+	void pushWord(int value);
+	void pushLong(int value);
+	int popWord();
+	int popLong();
 	
 	// exceptions & interrupts
-	public void raiseException(int vector);
-	public void raiseSRException();
-	public void raiseInterrupt(int priority);
-	public int getInterruptLevel();
+	void raiseException(int vector);
+	void raiseSRException();
+	void raiseInterrupt(int priority);
+	int getInterruptLevel();
+
+	Instruction getInstruction();
 
 	//source EA
-	public Operand resolveSrcEA(int mode, int reg, Size sz);
+	Operand resolveSrcEA(int mode, int reg, Size sz);
 	// destination EA
-	public Operand resolveDstEA(int mode, int reg, Size sz);
+	Operand resolveDstEA(int mode, int reg, Size sz);
 
 	// disassembling
-	public Instruction getInstructionAt(int address);
-	public Instruction getInstructionFor(int opcode);
-	public DisassembledOperand disassembleSrcEA(int address, int mode, int reg, Size sz);
-	public DisassembledOperand disassembleDstEA(int address, int mode, int reg, Size sz);
+	Instruction getInstructionAt(int address);
+	Instruction getInstructionFor(int opcode);
+	DisassembledOperand disassembleSrcEA(int address, int mode, int reg, Size sz);
+	DisassembledOperand disassembleDstEA(int address, int mode, int reg, Size sz);
 }

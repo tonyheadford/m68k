@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -176,9 +178,9 @@ public class OR implements InstructionHandler
 		int d = cpu.getDataRegisterByteSigned(reg);
 		int r = s | d;
 		cpu.setDataRegisterByte(reg, r);
-		int time = 4 + src.getTiming();
+//		int time = 4 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Byte);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int or_byte_ea_dest(int opcode)
@@ -188,9 +190,9 @@ public class OR implements InstructionHandler
 		int d = dst.getByteSigned();
 		int r = s | d;
 		dst.setByte(r);
-		int time = 8 + dst.getTiming();
+//		int time = 8 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Byte);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int or_word_dn_dest(int opcode)
@@ -202,9 +204,9 @@ public class OR implements InstructionHandler
 		int d = cpu.getDataRegisterWordSigned(reg);
 		int r = s | d;
 		cpu.setDataRegisterWord(reg, r);
-		int time = 4 + src.getTiming();
+//		int time = 4 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Word);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int or_word_ea_dest(int opcode)
@@ -214,9 +216,9 @@ public class OR implements InstructionHandler
 		int d = dst.getWordSigned();
 		int r = s | d;
 		dst.setWord(r);
-		int time = 8 + dst.getTiming();
+//		int time = 8 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Word);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int or_long_dn_dest(int opcode)
@@ -228,9 +230,9 @@ public class OR implements InstructionHandler
 		int d = cpu.getDataRegisterLong(reg);
 		int r = s | d;
 		cpu.setDataRegisterLong(reg, r);
-		int time = 6 + src.getTiming();
+//		int time = 6 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Long);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int or_long_ea_dest(int opcode)
@@ -240,9 +242,9 @@ public class OR implements InstructionHandler
 		int d = dst.getLong();
 		int r = s | d;
 		dst.setLong(r);
-		int time = 12 + dst.getTiming();
+//		int time = 12 + M68kCycles.getTimingByOpcode(opcode);
 		cpu.calcFlags(InstructionType.OR, s, d, r, Size.Long);
-		return time;
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)

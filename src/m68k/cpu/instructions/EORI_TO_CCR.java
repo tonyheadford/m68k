@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.timing.M68kCycles;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -63,8 +64,8 @@ public class EORI_TO_CCR implements InstructionHandler
         int sr = cpu.getCCRegister();
         s = s ^ (sr & 0x00ff);
         cpu.setCCRegister(s);
-        return 8;
-	}
+        return M68kCycles.getTimingByOpcode(opcode);
+    }
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{

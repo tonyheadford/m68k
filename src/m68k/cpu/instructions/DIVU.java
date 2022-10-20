@@ -1,6 +1,8 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
+import m68k.cpu.operand.OperandTiming;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -80,7 +82,7 @@ public class DIVU implements InstructionHandler
 		{
 			//divide by zero exception
 			cpu.raiseException(5);
-			time = 38 + op.getTiming();
+			time = 38 + OperandTiming.getOperandTiming(op, Size.Word);
 		}
 		else
 		{
@@ -122,7 +124,7 @@ public class DIVU implements InstructionHandler
 				cpu.clrFlags((Cpu.V_FLAG | Cpu.C_FLAG));
 			}
 			//worst case but less than 10% difference between best and worst cases
-			time = 140 + op.getTiming();
+			time = 140;
 		}
 
 		return time;

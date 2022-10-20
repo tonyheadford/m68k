@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.operand.Operand;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -105,7 +106,7 @@ public class MULU implements InstructionHandler
 		x = (x & 0x0f0f) + ((x >> 4) & 0x0f0f);
 		x = (x & 0x00ff) + ((x >> 8) & 0x00ff);
 
-		return 38 + (x << 1);
+		return 38 + (x << 1) + 4;
 	}
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
