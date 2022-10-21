@@ -35,18 +35,21 @@ public class BasicSetup extends TestCase {
         SystemModel.CPU.setPC(codebase);
     }
 
-    protected void setInstruction(int opcode) {
+    protected void setInstructionAtPC(int opcode) {
         SystemModel.MEM.poke(codebase, opcode, Size.Word);
+        SystemModel.CPU.setPC(codebase);
     }
 
     protected void setInstructionParamW(int opcode, int param) {
         SystemModel.MEM.poke(codebase, opcode, Size.Word);
         SystemModel.MEM.poke(codebase + 2, param, Size.Word);
+        SystemModel.CPU.setPC(codebase);
     }
 
     protected void setInstructionParamL(int opcode, int param) {
         SystemModel.MEM.poke(codebase, opcode, Size.Word);
         SystemModel.MEM.poke(codebase + 2, param, Size.Long);
+        SystemModel.CPU.setPC(codebase);
     }
 
     @After

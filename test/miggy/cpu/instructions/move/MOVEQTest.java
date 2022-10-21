@@ -11,7 +11,7 @@ public class MOVEQTest extends BasicSetup {
     }
 
     public void testPos() {
-        setInstruction(0x7014);    //move.q #20, d0
+        setInstructionAtPC(0x7014);    //move.q #20, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class MOVEQTest extends BasicSetup {
     }
 
     public void testNeg() {
-        setInstruction(0x70b5);    //moveq #-75,d0
+        setInstructionAtPC(0x70b5);    //moveq #-75,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -43,7 +43,7 @@ public class MOVEQTest extends BasicSetup {
     }
 
     public void testZero() {
-        setInstruction(0x7000);    //moveq #0,d0
+        setInstructionAtPC(0x7000);    //moveq #0,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);

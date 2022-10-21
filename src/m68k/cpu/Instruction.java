@@ -26,6 +26,6 @@ package m68k.cpu;
 */
 public interface Instruction
 {
-	public int execute(int opcode);
-	public DisassembledInstruction disassemble(int address, int opcode);
+	int execute(int opcode);
+	DisassembledInstruction disassemble(int address, int opcode);
 }

@@ -12,7 +12,7 @@ public class UNLKTest extends BasicSetup {
     }
 
     public void testInstruction() {
-        setInstruction(0x4e5e);    //unlk a6
+        setInstructionAtPC(0x4e5e);    //unlk a6
         int stack = SystemModel.CPU.getAddrRegister(7);
         SystemModel.CPU.push(0x87654321, Size.Long);
         SystemModel.CPU.setAddrRegister(6, stack - 4);

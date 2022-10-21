@@ -11,7 +11,7 @@ public class SUBATest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x90c0);    //suba.w d0,a0
+        setInstructionAtPC(0x90c0);    //suba.w d0,a0
         SystemModel.CPU.setDataRegister(0, 0xc678);
         SystemModel.CPU.setAddrRegister(0, 0x00ff7800);
 
@@ -28,7 +28,7 @@ public class SUBATest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x91c0);    //suba.l d0,a0
+        setInstructionAtPC(0x91c0);    //suba.l d0,a0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setAddrRegister(0, 0x87654321);
 

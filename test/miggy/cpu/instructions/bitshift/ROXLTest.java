@@ -12,7 +12,7 @@ public class ROXLTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xe330);    //roxl.b d1,d0
+        setInstructionAtPC(0xe330);    //roxl.b d1,d0
         SystemModel.CPU.setDataRegister(0, 0x876543e8);
         SystemModel.CPU.setDataRegister(1, 4);
 
@@ -29,7 +29,7 @@ public class ROXLTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xe150);    //roxl.w #8,d0
+        setInstructionAtPC(0xe150);    //roxl.w #8,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -45,7 +45,7 @@ public class ROXLTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xe3b0);    //roxl.l d1,d0
+        setInstructionAtPC(0xe3b0);    //roxl.l d1,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 18);
 
@@ -62,7 +62,7 @@ public class ROXLTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xe5d0);    //roxl (a0)
+        setInstructionAtPC(0xe5d0);    //roxl (a0)
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
 

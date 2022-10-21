@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import junit.framework.TestCase;
+import m68k.TestCpuUtil;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
@@ -28,14 +29,16 @@ public class MOVEMTest extends TestCase {
     }
 
     public void testR2MWordPreDec() {
-        bus.writeLong(0, 0x48a0_0080); //movem.w	a0,-(a0)
+        //movem.w	a0,-(a0)
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, 0x48a0, 0x0080);
         cpu.setAddrRegisterLong(0, stack);
         cpu.execute();
         assertEquals("Check for a0", stack, cpu.readMemoryWord(stack - 2));
     }
 
     public void testR2MLongPreDec() {
-        bus.writeLong(0, 0x48e0_0080); //movem.l	a0,-(a0)
+        //movem.l	a0,-(a0)
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, 0x48e0, 0x0080);
         cpu.setAddrRegisterLong(0, stack);
         cpu.execute();
         assertEquals("Check for a0", stack, cpu.readMemoryLong(stack - 4));

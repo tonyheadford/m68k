@@ -11,7 +11,7 @@ public class ORTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x8001);    //or.b d1, d0
+        setInstructionAtPC(0x8001);    //or.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 
@@ -28,7 +28,7 @@ public class ORTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x8041);    //or.w d1, d0
+        setInstructionAtPC(0x8041);    //or.w d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 
@@ -45,7 +45,7 @@ public class ORTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x8081);    //or.l d1, d0
+        setInstructionAtPC(0x8081);    //or.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 

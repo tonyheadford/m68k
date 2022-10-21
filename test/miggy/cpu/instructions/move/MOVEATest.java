@@ -11,7 +11,7 @@ public class MOVEATest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x3040);    //movea.w d0, a0
+        setInstructionAtPC(0x3040);    //movea.w d0, a0
         SystemModel.CPU.setDataRegister(0, 0x8004);
         SystemModel.CPU.setAddrRegister(0, 0xc7c7c7c7);
 
@@ -28,7 +28,7 @@ public class MOVEATest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x2040);    //movea.l d0, a0
+        setInstructionAtPC(0x2040);    //movea.l d0, a0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setAddrRegister(0, 0xc7c7c7c7);
 

@@ -40,6 +40,9 @@ public abstract class CpuCore implements Cpu
 	protected int reg_sr;
 	protected int reg_usp;
 	protected int reg_ssp;
+
+	//prefetch related
+	protected int ir;
 	protected Operand[] srcHandlers;
 	protected Operand[] dstHandlers;
 	protected Operand srcEAHandler;
@@ -76,6 +79,7 @@ public abstract class CpuCore implements Cpu
 		reg_pc = memory.readLong(4);
 		//supervisor mode, interrupts enabled
 		reg_sr = 0x2700;
+		prefetch();
 	}
 
 	@Override
@@ -196,9 +200,15 @@ public abstract class CpuCore implements Cpu
 	public void setPC(int address)
 	{
 		reg_pc = address;
+		prefetch();
 	}
 
 	// pc fetches - for reading data following instructions and incrementing the PC afterwards
+
+	public int prefetch(){
+		ir = readMemoryWord(reg_pc);
+		return ir;
+	}
 	public int fetchPCWord()
 	{
 		int value = readMemoryWord(reg_pc);

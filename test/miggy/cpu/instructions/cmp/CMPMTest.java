@@ -12,7 +12,7 @@ public class CMPMTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xb308);    //cmpm.b (a0)+, (a1)+
+        setInstructionAtPC(0xb308);    //cmpm.b (a0)+, (a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
         SystemModel.CPU.setAddrRegister(1, 40);
@@ -32,7 +32,7 @@ public class CMPMTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xb348);    //cmpm.w (a0)+,(a1)+
+        setInstructionAtPC(0xb348);    //cmpm.w (a0)+,(a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
         SystemModel.CPU.setAddrRegister(1, 40);
@@ -52,7 +52,7 @@ public class CMPMTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xb388);    //cmpm.l (a0)+,(a1)+
+        setInstructionAtPC(0xb388);    //cmpm.l (a0)+,(a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
         SystemModel.CPU.setAddrRegister(1, 40);

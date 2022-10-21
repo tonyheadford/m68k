@@ -28,8 +28,8 @@ import java.nio.ByteBuffer;
 */
 public class MemorySpace implements AddressSpace
 {
-	private ByteBuffer buffer;
-	private int size;
+	private final ByteBuffer buffer;
+	private final int size;
 
 	public MemorySpace(int sizeKb)
 	{

@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import junit.framework.TestCase;
+import m68k.TestCpuUtil;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
@@ -27,7 +28,7 @@ public class SP_ByteOperationTest extends TestCase {
 
     public void testSpBytePostInc() {
         int opcode = 0xbf08; //cmpm.b  (A0)+, (A7)+
-        cpu.writeMemoryWord(0, opcode);
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(7, stack);
         cpu.setAddrRegisterLong(0, 0x300);
         int spExp = stack + 2;
@@ -39,7 +40,7 @@ public class SP_ByteOperationTest extends TestCase {
 
     public void testSpBytePreDec() {
         int opcode = 0xdf08; //addx.b  -(A0), -(A7)
-        cpu.writeMemoryWord(0, opcode);
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(7, stack);
         cpu.setAddrRegisterLong(0, 0x300);
         int spExp = stack - 2;

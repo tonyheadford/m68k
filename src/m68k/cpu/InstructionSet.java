@@ -26,5 +26,5 @@ package m68k.cpu;
 */
 public interface InstructionSet
 {
-	public void addInstruction(int opcode, Instruction i);
+	void addInstruction(int opcode, Instruction i);
 }

@@ -11,7 +11,7 @@ public class EXGTest extends BasicSetup {
     }
 
     public void testInstruction() {
-        setInstruction(0xc141);    // exg d0,d1
+        setInstructionAtPC(0xc141);    // exg d0,d1
 
         SystemModel.CPU.setDataRegister(0, 0x98765432);
         SystemModel.CPU.setDataRegister(1, 0x12345678);

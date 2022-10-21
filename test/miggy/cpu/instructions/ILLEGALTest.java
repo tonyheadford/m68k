@@ -11,7 +11,7 @@ public class ILLEGALTest extends BasicSetup {
     }
 
     public void testTrap() {
-        setInstruction(0x4afc);    //illegal
+        setInstructionAtPC(0x4afc);    //illegal
 
         SystemModel.CPU.setCCR((byte) 0);
         int time = SystemModel.CPU.execute();

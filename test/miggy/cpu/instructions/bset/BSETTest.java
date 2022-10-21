@@ -11,7 +11,7 @@ public class BSETTest extends BasicSetup {
     }
 
     public void testDyn() {
-        setInstruction(0x03c0);    //bset d1,d0
+        setInstructionAtPC(0x03c0);    //bset d1,d0
         SystemModel.CPU.setDataRegister(0, 0x0010);
         SystemModel.CPU.setDataRegister(1, 4);
         SystemModel.CPU.setCCR((byte) 0);

@@ -12,7 +12,7 @@ public class PEATest extends BasicSetup {
     }
 
     public void testInstruction() {
-        setInstruction(0x4850);    //pea (a0)
+        setInstructionAtPC(0x4850);    //pea (a0)
         SystemModel.CPU.setAddrRegister(0, 0x00002000);
 
         SystemModel.CPU.setCCR((byte) 0);

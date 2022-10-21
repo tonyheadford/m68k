@@ -11,7 +11,7 @@ public class MOVE_2_SRTest extends BasicSetup {
     }
 
     public void testMove() {
-        setInstruction(0x46c0);    //move d0,sr
+        setInstructionAtPC(0x46c0);    //move d0,sr
         SystemModel.CPU.setDataRegister(0, 0x2015);
 
         SystemModel.CPU.setSR((short) 0x2000);    //set supervisor bit
@@ -27,7 +27,7 @@ public class MOVE_2_SRTest extends BasicSetup {
     }
 
     public void testMoveException() {
-        setInstruction(0x46c0);    //move d0,sr
+        setInstructionAtPC(0x46c0);    //move d0,sr
         SystemModel.CPU.setDataRegister(0, 0x2015);
 
         SystemModel.CPU.setSR((short) 0);

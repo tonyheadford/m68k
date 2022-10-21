@@ -11,7 +11,7 @@ public class SWAPTest extends BasicSetup {
     }
 
     public void testSwapPos() {
-        setInstruction(0x4840);    //swap d0
+        setInstructionAtPC(0x4840);    //swap d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class SWAPTest extends BasicSetup {
     }
 
     public void testSwapNeg() {
-        setInstruction(0x4840);    //swap d0
+        setInstructionAtPC(0x4840);    //swap d0
         SystemModel.CPU.setDataRegister(0, 0x43218765);
 
         SystemModel.CPU.setCCR((byte) 0);

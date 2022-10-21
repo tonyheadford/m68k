@@ -48,6 +48,8 @@ public interface Cpu {
 	//24 bits
 	int PC_MASK = 0xFF_FFFF;
 
+	int NUM_OPCODES = 0x1_0000;
+
 	void setAddressSpace(AddressSpace memory);
 
 	void reset();
@@ -111,6 +113,7 @@ public interface Cpu {
 	void calcFlagsParam(InstructionType type, int s, int d, int r, int extraParam, Size sz);
 	boolean testCC(int cc);
 	int getOpcode();
+	int getPrefetchWord();
 
 	// stacks
 	int getUSP();

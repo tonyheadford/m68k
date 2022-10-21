@@ -11,7 +11,7 @@ public class MOVE_F_SRTest extends BasicSetup {
     }
 
     public void testMove() {
-        setInstruction(0x40c0);    //move sr,d0
+        setInstructionAtPC(0x40c0);    //move sr,d0
 
         SystemModel.CPU.setSR((short) 0x000f);
 

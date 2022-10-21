@@ -12,7 +12,7 @@ public class MOVE_2_CCRTest extends BasicSetup {
     }
 
     public void testMove() {
-        setInstruction(0x44c0);    //move d0,ccr
+        setInstructionAtPC(0x44c0);    //move d0,ccr
         SystemModel.CPU.setDataRegister(0, 0x0015);
 
         SystemModel.CPU.setSR(0xff00);

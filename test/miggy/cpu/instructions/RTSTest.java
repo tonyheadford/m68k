@@ -12,7 +12,7 @@ public class RTSTest extends BasicSetup {
     }
 
     public void testReturn() {
-        setInstruction(0x4e75);    //rts
+        setInstructionAtPC(0x4e75);    //rts
 
         SystemModel.CPU.setCCR((byte) 0);
         SystemModel.CPU.push(codebase + 100, Size.Long);

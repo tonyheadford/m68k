@@ -11,7 +11,7 @@ public class TRAPTest extends BasicSetup {
     }
 
     public void testTrap() {
-        setInstruction(0x4e45);    //trap #5
+        setInstructionAtPC(0x4e45);    //trap #5
 
         SystemModel.CPU.setCCR((byte) 0);
         int time = SystemModel.CPU.execute();

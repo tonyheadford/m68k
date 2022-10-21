@@ -12,7 +12,7 @@ public class RTETest extends BasicSetup {
     }
 
     public void testReturn() {
-        setInstruction(0x4e73);    //rte
+        setInstructionAtPC(0x4e73);    //rte
 
         SystemModel.CPU.setCCR((byte) 0);
         SystemModel.CPU.setSupervisorMode(true);
@@ -32,7 +32,7 @@ public class RTETest extends BasicSetup {
     }
 
     public void testPrivViolation() {
-        setInstruction(0x4e73);    //rte
+        setInstructionAtPC(0x4e73);    //rte
 
         SystemModel.CPU.setCCR((byte) 0);
         int time = SystemModel.CPU.execute();

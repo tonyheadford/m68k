@@ -11,7 +11,7 @@ public class MULUTest extends BasicSetup {
     }
 
     public void testPos() {
-        setInstruction(0xc0c1);    //mulu d1,d0
+        setInstructionAtPC(0xc0c1);    //mulu d1,d0
 
         SystemModel.CPU.setDataRegister(0, 0x7765);
         SystemModel.CPU.setDataRegister(1, 0x0345);
@@ -26,7 +26,7 @@ public class MULUTest extends BasicSetup {
     }
 
     public void testNeg() {
-        setInstruction(0xc0c1);    //mulu d1,d0
+        setInstructionAtPC(0xc0c1);    //mulu d1,d0
 
         SystemModel.CPU.setDataRegister(0, 0xffff8765);
         SystemModel.CPU.setDataRegister(1, 0x0033);

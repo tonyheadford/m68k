@@ -11,7 +11,7 @@ public class EXTTest extends BasicSetup {
     }
 
     public void testNegByteToWord() {
-        setInstruction(0x4880);    //ext.w d0
+        setInstructionAtPC(0x4880);    //ext.w d0
         SystemModel.CPU.setDataRegister(0, 0x87);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class EXTTest extends BasicSetup {
     }
 
     public void testNegWordToLong() {
-        setInstruction(0x48c0);    //ext.l d0
+        setInstructionAtPC(0x48c0);    //ext.l d0
         SystemModel.CPU.setDataRegister(0, 0x8765);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -43,7 +43,7 @@ public class EXTTest extends BasicSetup {
     }
 
     public void testPosByteToWord() {
-        setInstruction(0x4880);    //ext.w d0
+        setInstructionAtPC(0x4880);    //ext.w d0
         SystemModel.CPU.setDataRegister(0, 0x27);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -59,7 +59,7 @@ public class EXTTest extends BasicSetup {
     }
 
     public void testPosWordToLong() {
-        setInstruction(0x48c0);    //ext.l d0
+        setInstructionAtPC(0x48c0);    //ext.l d0
         SystemModel.CPU.setDataRegister(0, 0x2765);
 
         SystemModel.CPU.setCCR((byte) 0);

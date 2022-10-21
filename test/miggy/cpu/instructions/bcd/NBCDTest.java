@@ -12,7 +12,7 @@ public class NBCDTest extends BasicSetup {
     }
 
     public void testReg() {
-        setInstruction(0x4800);    //nbcd d0
+        setInstructionAtPC(0x4800);    //nbcd d0
         SystemModel.CPU.setDataRegister(0, 0x0099);
         SystemModel.CPU.setCCR((byte) 0);
 
@@ -27,7 +27,7 @@ public class NBCDTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0x4820);    //nbcd -(a0)
+        setInstructionAtPC(0x4820);    //nbcd -(a0)
         SystemModel.CPU.setAddrRegister(0, codebase + 100);
         SystemModel.MEM.poke(codebase + 98, 0x0099, Size.Word);
         SystemModel.CPU.setCCR((byte) 0);

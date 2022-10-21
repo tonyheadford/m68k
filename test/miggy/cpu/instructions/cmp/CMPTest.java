@@ -12,7 +12,7 @@ public class CMPTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xb001);    //cmp.b d1, d0
+        setInstructionAtPC(0xb001);    //cmp.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x876543e8);
         SystemModel.CPU.setDataRegister(1, 0xe8);
 
@@ -43,7 +43,7 @@ public class CMPTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xb081);    //cmp.l d1, d0
+        setInstructionAtPC(0xb081);    //cmp.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xcc00cc00);
 
@@ -59,7 +59,7 @@ public class CMPTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xb050);    //cmp (a0),d0
+        setInstructionAtPC(0xb050);    //cmp (a0),d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);

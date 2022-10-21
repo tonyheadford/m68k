@@ -26,25 +26,25 @@ package m68k.memory;
 */
 public interface AddressSpace
 {
-	public void reset();
-	public int getStartAddress();
-	public int getEndAddress();
+	void reset();
+	int getStartAddress();
+	int getEndAddress();
 
-	public int readByte(int addr);
-	public int readWord(int addr);
-	public int readLong(int addr);
+	int readByte(int addr);
+	int readWord(int addr);
+	int readLong(int addr);
 
-	public void writeByte(int addr, int value);
-	public void writeWord(int addr, int value);
-	public void writeLong(int addr, int value);
+	void writeByte(int addr, int value);
+	void writeWord(int addr, int value);
+	void writeLong(int addr, int value);
 
-	public int internalReadByte(int addr);
-	public int internalReadWord(int addr);
-	public int internalReadLong(int addr);
+	int internalReadByte(int addr);
+	int internalReadWord(int addr);
+	int internalReadLong(int addr);
 
-	public void internalWriteByte(int addr, int value);
-	public void internalWriteWord(int addr, int value);
-	public void internalWriteLong(int addr, int value);
+	void internalWriteByte(int addr, int value);
+	void internalWriteWord(int addr, int value);
+	void internalWriteLong(int addr, int value);
 
-	public int size();
+	int size();
 }

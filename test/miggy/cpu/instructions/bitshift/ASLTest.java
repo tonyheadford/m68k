@@ -12,7 +12,7 @@ public class ASLTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xe700);    //asl.b #3,d0
+        setInstructionAtPC(0xe700);    //asl.b #3,d0
         SystemModel.CPU.setDataRegister(0, 0x567801);
         SystemModel.CPU.setCCR((byte) 0);
 
@@ -27,7 +27,7 @@ public class ASLTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xe760);    //asl.w d3,d0
+        setInstructionAtPC(0xe760);    //asl.w d3,d0
         SystemModel.CPU.setDataRegister(0, 0x567801);
         SystemModel.CPU.setDataRegister(3, 14);
         SystemModel.CPU.setCCR((byte) 0);
@@ -43,7 +43,7 @@ public class ASLTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xe7a0);    //asl.l d3,d0
+        setInstructionAtPC(0xe7a0);    //asl.l d3,d0
         SystemModel.CPU.setDataRegister(0, 0x567801);
         SystemModel.CPU.setDataRegister(3, 20);
         SystemModel.CPU.setCCR((byte) 0);
@@ -59,7 +59,7 @@ public class ASLTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xe1d0);    //asl (a0)
+        setInstructionAtPC(0xe1d0);    //asl (a0)
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x12345678, Size.Long);
         SystemModel.CPU.setCCR((byte) 0);

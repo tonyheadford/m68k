@@ -11,7 +11,7 @@ public class BTSTTest extends BasicSetup {
     }
 
     public void testDyn() {
-        setInstruction(0x0300);    //btst d1,d0
+        setInstructionAtPC(0x0300);    //btst d1,d0
         SystemModel.CPU.setDataRegister(0, 0x0010);
         SystemModel.CPU.setDataRegister(1, 4);
 

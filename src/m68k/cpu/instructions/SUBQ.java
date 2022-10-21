@@ -140,14 +140,13 @@ public class SUBQ implements InstructionHandler
 			int r = d-s;
 			dst.setWord(r);
 			cpu.calcFlags(InstructionType.SUB, s, d, r, Size.Word);
-			return M68kCycles.getTimingByOpcode(opcode);
 		}
 		else
 		{
 			int reg=opcode & 0x07;
 			cpu.setAddrRegisterLong(reg,cpu.getAddrRegisterLong(reg)-s);
-			return M68kCycles.getTimingByOpcode(opcode);
 		}
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int subq_long(int opcode)

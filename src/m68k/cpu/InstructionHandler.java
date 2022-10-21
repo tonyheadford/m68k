@@ -26,5 +26,5 @@ package m68k.cpu;
 */
 public interface InstructionHandler
 {
-	public void register(InstructionSet is);
+	void register(InstructionSet is);
 }

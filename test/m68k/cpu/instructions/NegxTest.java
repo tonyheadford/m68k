@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import junit.framework.TestCase;
+import m68k.TestCpuUtil;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
@@ -40,7 +41,7 @@ public class NegxTest extends TestCase {
 
     private void negxInternal() {
         int opcode = 0x4000; //negx.b d0
-        cpu.writeMemoryWord(0, opcode);
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setDataRegisterLong(0, 0x000000FF);
         cpu.setFlags(Cpu.X_FLAG);
         boolean zFlag = cpu.isFlagSet(Cpu.Z_FLAG);

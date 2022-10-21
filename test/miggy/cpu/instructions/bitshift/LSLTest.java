@@ -12,7 +12,7 @@ public class LSLTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xe328);    //lsl.b d1,d0
+        setInstructionAtPC(0xe328);    //lsl.b d1,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 4);
         SystemModel.CPU.setCCR((byte) 0);
@@ -28,7 +28,7 @@ public class LSLTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xe148);    //lsl.w #8,d0
+        setInstructionAtPC(0xe148);    //lsl.w #8,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setCCR((byte) 0);
 
@@ -43,7 +43,7 @@ public class LSLTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xe3a8);    //lsl.l d1,d0
+        setInstructionAtPC(0xe3a8);    //lsl.l d1,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 18);
         SystemModel.CPU.setCCR((byte) 0);
@@ -59,7 +59,7 @@ public class LSLTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xe3d0);    //lsl (a0)
+        setInstructionAtPC(0xe3d0);    //lsl (a0)
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
 

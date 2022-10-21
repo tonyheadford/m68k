@@ -11,7 +11,7 @@ public class TSTTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x4a00);    //tst.b d0
+        setInstructionAtPC(0x4a00);    //tst.b d0
         SystemModel.CPU.setDataRegister(0, 0x12345600);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class TSTTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x4a40);    //tst.w d0
+        setInstructionAtPC(0x4a40);    //tst.w d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -43,7 +43,7 @@ public class TSTTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x4a80);    //tst.l d0
+        setInstructionAtPC(0x4a80);    //tst.l d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);

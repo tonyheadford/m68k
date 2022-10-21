@@ -28,6 +28,9 @@ import m68k.cpu.instructions.*;
 */
 public class MC68000 extends CpuCore implements InstructionSet
 {
+
+	public static final boolean ENABLE_PREFETCH = Boolean.valueOf(System.getProperty("68k.enable.prefetch", "false"));
+
 	static {
 		initProperties();
 	}
@@ -41,40 +44,58 @@ public class MC68000 extends CpuCore implements InstructionSet
 		if(DIVU.ACCURATE_DIV_TIMING){
 			System.out.println("Using accurate DIVU/S timing");
 		}
+		if(ENABLE_PREFETCH){
+			System.out.println("Enable prefetch");
+		}
 	}
 
-	protected Instruction[] i_table;
+	protected final Instruction[] i_table;
 	protected final Instruction unknown;
 	protected int loaded_ops;
 
 	public MC68000()
 	{
-		i_table = new Instruction[65536];
-		for(int i = 0; i < 65536; i++)
-			i_table[i] = null;
-
+		i_table = new Instruction[NUM_OPCODES];
 		unknown = new UNKNOWN(this);
+		for(int i = 0; i < NUM_OPCODES; i++)
+			i_table[i] = unknown;
 		loaded_ops = 0;
 		loadInstructionSet();
 	}
 
-	public int execute()
-	{
+	@Override
+	public int execute() {
+		if(ENABLE_PREFETCH){
+			return executePrefetch();
+		} else {
+			return executeNoPrefetch();
+		}
+	}
+
+	private int executePrefetch() {
 		//save the PC address
 		currentInstructionAddress = reg_pc;
-		opcode = fetchPCWord();
-
+		//fetch
+		opcode = ir;
+		reg_pc += 2;
 		instruction = i_table[opcode];
-		if(instruction != null)
-		{
-			return instruction.execute(opcode);
-//			OperandTiming.compareTiming(this, currentInstructionAddress, res);
-		}
-		else
-		{
-			reg_pc = currentInstructionAddress;
-			return unknown.execute(opcode);
-		}
+		int res = instruction.execute(opcode);
+		prefetch();
+		return res;
+	}
+
+	private int executeNoPrefetch() {
+		//save the PC address
+		currentInstructionAddress = reg_pc;
+		//fetch
+		opcode = fetchPCWord();
+		instruction = i_table[opcode];
+		return instruction.execute(opcode);
+	}
+
+	@Override
+	public int getPrefetchWord(){
+		return ENABLE_PREFETCH ? ir : readMemoryWord(reg_pc);
 	}
 
 	protected void loadInstructionSet()
@@ -161,6 +182,7 @@ public class MC68000 extends CpuCore implements InstructionSet
 		new TRAPV(this).register(this);
 		new TST(this).register(this);
 		new UNLK(this).register(this);
+		assert loaded_ops == 46371;
 	}
 
 	public void addInstruction(int opcode, Instruction i)
@@ -168,7 +190,7 @@ public class MC68000 extends CpuCore implements InstructionSet
 		//build the instruction table
 		Instruction current = i_table[opcode];
 
-		if(current == null)
+		if(current == unknown)
 		{
 			i_table[opcode] = i;
 			loaded_ops++;
@@ -181,11 +203,7 @@ public class MC68000 extends CpuCore implements InstructionSet
 
 	public Instruction getInstructionFor(int opcode)
 	{
-		Instruction i = i_table[opcode];
-		if(i == null)
-			i = unknown;
-
-		return i;
+		return i_table[opcode];
 	}
 
 	public Instruction getInstructionAt(int address)

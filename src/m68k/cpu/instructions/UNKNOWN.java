@@ -39,6 +39,7 @@ public class UNKNOWN implements Instruction
 
 	public int execute(int opcode)
 	{
+		cpu.setPC(cpu.getPC() - 2);
 		//illegal instruction
 		int vector;
 		if((opcode & 0xf000) == 0xa000)

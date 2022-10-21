@@ -12,7 +12,7 @@ public class ADDATest extends BasicSetup {
 
     public void testWord() {
         //test: changed to poke
-        setInstruction(0xd0c0);    //adda.w d0, a0
+        setInstructionAtPC(0xd0c0);    //adda.w d0, a0
         SystemModel.CPU.setDataRegister(0, 0xc234);
         SystemModel.CPU.setAddrRegister(0, 0x56785678);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -28,7 +28,7 @@ public class ADDATest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xd1c0);    //adda.l d0, a0
+        setInstructionAtPC(0xd1c0);    //adda.l d0, a0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setAddrRegister(0, 0x56785678);
         SystemModel.CPU.setCCR((byte) 0x1f);

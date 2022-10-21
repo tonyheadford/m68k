@@ -11,7 +11,7 @@ public class SUBQTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x5100);    //subq.b #8, d0
+        setInstructionAtPC(0x5100);    //subq.b #8, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class SUBQTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x5f40);    //subq.w #7, d0
+        setInstructionAtPC(0x5f40);    //subq.w #7, d0
         SystemModel.CPU.setDataRegister(0, 0x12340002);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -43,7 +43,7 @@ public class SUBQTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x5d80);    //subq.l #6, d0
+        setInstructionAtPC(0x5d80);    //subq.l #6, d0
         SystemModel.CPU.setDataRegister(0, 0x80000003);
 
         SystemModel.CPU.setCCR((byte) 0);

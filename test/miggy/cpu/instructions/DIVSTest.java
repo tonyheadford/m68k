@@ -11,7 +11,7 @@ public class DIVSTest extends BasicSetup {
     }
 
     public void testPos() {
-        setInstruction(0x81c1);    //divs d1,d0
+        setInstructionAtPC(0x81c1);    //divs d1,d0
 
         SystemModel.CPU.setDataRegister(0, 0x8765);
         SystemModel.CPU.setDataRegister(1, 0x0003);
@@ -26,7 +26,7 @@ public class DIVSTest extends BasicSetup {
     }
 
     public void testNeg() {
-        setInstruction(0x81c1);    //divs d1,d0
+        setInstructionAtPC(0x81c1);    //divs d1,d0
 
         SystemModel.CPU.setDataRegister(0, 0xffff8765);
         SystemModel.CPU.setDataRegister(1, 0x0033);
@@ -41,7 +41,7 @@ public class DIVSTest extends BasicSetup {
     }
 
     public void testDivByZero() {
-        setInstruction(0x81c1);    //divs d1,d0
+        setInstructionAtPC(0x81c1);    //divs d1,d0
 
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0);

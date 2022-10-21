@@ -12,7 +12,7 @@ public class JSRTest extends BasicSetup {
     }
 
     public void testInstruction() {
-        setInstruction(0x4e90);    //jsr (a0)
+        setInstructionAtPC(0x4e90);    //jsr (a0)
         SystemModel.CPU.setAddrRegister(0, codebase + 50);
 
         SystemModel.CPU.setCCR((byte) 0);

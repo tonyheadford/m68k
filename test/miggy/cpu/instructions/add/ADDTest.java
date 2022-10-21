@@ -11,7 +11,7 @@ public class ADDTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xd001);    //add.b d1, d0
+        setInstructionAtPC(0xd001);    //add.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0x78);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -27,7 +27,7 @@ public class ADDTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xd041);    //add.l d1, d0
+        setInstructionAtPC(0xd041);    //add.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0xaa78);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -43,7 +43,7 @@ public class ADDTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xd081);    //add.l d1, d0
+        setInstructionAtPC(0xd081);    //add.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0xf8765432);
         SystemModel.CPU.setCCR((byte) 0x1f);

@@ -18,7 +18,7 @@ public class TASTest extends BasicSetup {
     }
 
     public void testSet() {
-        setInstruction(0x4ac0);    //tas d0
+        setInstructionAtPC(0x4ac0);    //tas d0
         SystemModel.CPU.setDataRegister(0, 0x87654381);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -34,7 +34,7 @@ public class TASTest extends BasicSetup {
     }
 
     public void testUnset() {
-        setInstruction(0x4ac0);    //tas d0
+        setInstructionAtPC(0x4ac0);    //tas d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -50,7 +50,7 @@ public class TASTest extends BasicSetup {
     }
 
     public void testZero() {
-        setInstruction(0x4ac0);    //tas d0
+        setInstructionAtPC(0x4ac0);    //tas d0
         SystemModel.CPU.setDataRegister(0, 0x87654300);
 
         SystemModel.CPU.setCCR((byte) 0);

@@ -12,7 +12,7 @@ public class RORTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xe238);    //ror.b d1,d0
+        setInstructionAtPC(0xe238);    //ror.b d1,d0
         SystemModel.CPU.setDataRegister(0, 0x876543e8);
         SystemModel.CPU.setDataRegister(1, 4);
         SystemModel.CPU.setCCR((byte) 0);
@@ -28,7 +28,7 @@ public class RORTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xe058);    //ror.w #8,d0
+        setInstructionAtPC(0xe058);    //ror.w #8,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setCCR((byte) 0);
 
@@ -43,7 +43,7 @@ public class RORTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xe2b8);    //ror.l d1,d0
+        setInstructionAtPC(0xe2b8);    //ror.l d1,d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 18);
         SystemModel.CPU.setCCR((byte) 0);
@@ -59,7 +59,7 @@ public class RORTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xe6d0);    //ror (a0)
+        setInstructionAtPC(0xe6d0);    //ror (a0)
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
         SystemModel.CPU.setCCR((byte) 0);

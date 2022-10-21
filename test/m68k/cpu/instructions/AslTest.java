@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import junit.framework.TestCase;
+import m68k.TestCpuUtil;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
@@ -33,7 +34,8 @@ public class AslTest extends TestCase {
         int opcode = 0xe1d5; //asl.w (a5)
         int memLoc = 0x10;
         int data = 0xFF_8000;
-        cpu.writeMemoryWord(0, opcode);
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
+
         cpu.setAddrRegisterLong(5, memLoc);
         bus.writeLong(memLoc - 2, data);
 
@@ -49,7 +51,7 @@ public class AslTest extends TestCase {
         int opcode = 0xE3D5; //lsl.w (a5)
         int memLoc = 0x10;
         int data = 0xFF_8000;
-        cpu.writeMemoryWord(0, opcode);
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(5, memLoc);
         bus.writeLong(memLoc - 2, data);
 

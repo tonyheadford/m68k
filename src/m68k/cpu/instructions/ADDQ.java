@@ -139,14 +139,13 @@ public class ADDQ implements InstructionHandler
 			int r = s + d;
 			dst.setWord(r);
 			cpu.calcFlags(InstructionType.ADD, s, d, r, Size.Word);
-			return M68kCycles.getTimingByOpcode(opcode);
 		}
 		else
 		{
 			int reg=opcode & 0x07;
 			cpu.setAddrRegisterLong(reg,cpu.getAddrRegisterLong(reg)+s);
-			return M68kCycles.getTimingByOpcode(opcode);
 		}
+		return M68kCycles.getTimingByOpcode(opcode);
 	}
 
 	protected final int addq_long(int opcode)

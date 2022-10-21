@@ -11,7 +11,7 @@ public class NEGXTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x4000);    //negx.b d0
+        setInstructionAtPC(0x4000);    //negx.b d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0x10);    //x set
@@ -27,7 +27,7 @@ public class NEGXTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x4040);    //negx.w d0
+        setInstructionAtPC(0x4040);    //negx.w d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);    // x not set
@@ -43,7 +43,7 @@ public class NEGXTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x4080);    //negx.l d0
+        setInstructionAtPC(0x4080);    //negx.l d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0x10);    //x set

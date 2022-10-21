@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class OperandTiming {
 
-    public static final Map<Class, Integer> operandIndexMap;
+    public static final Map<Class<?>, Integer> operandIndexMap;
 
     static {
-        Map<Class, Integer> m = new HashMap<>();
+        Map<Class<?>, Integer> m = new HashMap<>();
         m.put(DataRegisterOperand.class, 0);
         m.put(AddressRegisterOperand.class, 1);
         m.put(AddressRegisterIndirectOperand.class, 2);

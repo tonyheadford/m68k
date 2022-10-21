@@ -11,7 +11,7 @@ public class SxxTest extends BasicSetup {
     }
 
     public void testSet() {
-        setInstruction(0x54c0);    //scc d0
+        setInstructionAtPC(0x54c0);    //scc d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);
@@ -27,7 +27,7 @@ public class SxxTest extends BasicSetup {
     }
 
     public void testNotSet() {
-        setInstruction(0x55c0);    //scs d0
+        setInstructionAtPC(0x55c0);    //scs d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
 
         SystemModel.CPU.setCCR((byte) 0);

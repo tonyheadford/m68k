@@ -1,8 +1,9 @@
 package miggy.cpu.instructions;
 
 import miggy.BasicSetup;
-import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+
+import static miggy.SystemModel.CPU;
 
 // $Revision: 21 $
 public class CHKTest extends BasicSetup {
@@ -11,59 +12,61 @@ public class CHKTest extends BasicSetup {
     }
 
     public void testNeg() {
-        setInstruction(0x4181);    //chk d1,d0
-        SystemModel.CPU.setDataRegister(0, 0xc321);
-        SystemModel.CPU.setDataRegister(1, 0x5678);
+        setInstructionAtPC(0x4181);    //chk d1,d0
+        CPU.setPC(codebase);
+        CPU.setDataRegister(0, 0xc321);
+        CPU.setDataRegister(1, 0x5678);
 
-        SystemModel.CPU.setCCR((byte) 0);
+        CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        int time = CPU.execute();
 
-        assertTrue("Check CPU in supervisor mode", SystemModel.CPU.isSupervisorMode());
+        assertTrue("Check CPU in supervisor mode", CPU.isSupervisorMode());
         //vector number stored in vector addr for testing
-        assertEquals("Check PC", 6, SystemModel.CPU.getPC());
+        assertEquals("Check PC", 6, CPU.getPC());
 
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertTrue("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertFalse("Check X", CPU.isSet(CpuFlag.X));
+        assertTrue("Check N", CPU.isSet(CpuFlag.N));
+        assertFalse("Check Z", CPU.isSet(CpuFlag.Z));
+        assertFalse("Check V", CPU.isSet(CpuFlag.V));
+        assertFalse("Check C", CPU.isSet(CpuFlag.C));
     }
 
     public void testGreater() {
-        setInstruction(0x4181);    //chk d1,d0
-        SystemModel.CPU.setDataRegister(0, 0x6321);
-        SystemModel.CPU.setDataRegister(1, 0x5678);
+        setInstructionAtPC(0x4181);    //chk d1,d0
+        CPU.setPC(codebase);
+        CPU.setDataRegister(0, 0x6321);
+        CPU.setDataRegister(1, 0x5678);
 
-        SystemModel.CPU.setCCR((byte) 0);
+        CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        int time = CPU.execute();
 
-        assertTrue("Check CPU in supervisor mode", SystemModel.CPU.isSupervisorMode());
+        assertTrue("Check CPU in supervisor mode", CPU.isSupervisorMode());
         //vector number stored in vector addr for testing
-        assertEquals("Check PC", 6, SystemModel.CPU.getPC());
+        assertEquals("Check PC", 6, CPU.getPC());
 
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertFalse("Check X", CPU.isSet(CpuFlag.X));
+        assertFalse("Check N", CPU.isSet(CpuFlag.N));
+        assertFalse("Check Z", CPU.isSet(CpuFlag.Z));
+        assertFalse("Check V", CPU.isSet(CpuFlag.V));
+        assertFalse("Check C", CPU.isSet(CpuFlag.C));
     }
 
     public void testNoException() {
-        setInstruction(0x4181);    //chk d1,d0
-        SystemModel.CPU.setDataRegister(0, 0x4321);
-        SystemModel.CPU.setDataRegister(1, 0x5678);
+        setInstructionAtPC(0x4181);    //chk d1,d0
+        CPU.setDataRegister(0, 0x4321);
+        CPU.setDataRegister(1, 0x5678);
 
-        SystemModel.CPU.setCCR((byte) 0);
+        CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        int time = CPU.execute();
 
-        assertFalse("Check CPU not in supervisor mode", SystemModel.CPU.isSupervisorMode());
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertFalse("Check CPU not in supervisor mode", CPU.isSupervisorMode());
+        assertFalse("Check X", CPU.isSet(CpuFlag.X));
+        assertFalse("Check N", CPU.isSet(CpuFlag.N));
+        assertFalse("Check Z", CPU.isSet(CpuFlag.Z));
+        assertFalse("Check V", CPU.isSet(CpuFlag.V));
+        assertFalse("Check C", CPU.isSet(CpuFlag.C));
     }
 }

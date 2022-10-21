@@ -12,7 +12,7 @@ public class ABCDTest extends BasicSetup {
     }
 
     public void testReg() {
-        setInstruction(0xc101);    //abcd d1,d0
+        setInstructionAtPC(0xc101);    //abcd d1,d0
         SystemModel.CPU.setDataRegister(0, 0x0099);
         SystemModel.CPU.setDataRegister(1, 0x0001);
         SystemModel.CPU.setCCR((byte) 0);
@@ -28,7 +28,7 @@ public class ABCDTest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xc109);    //abcd -(a1),-(a0)
+        setInstructionAtPC(0xc109);    //abcd -(a1),-(a0)
         SystemModel.CPU.setAddrRegister(0, codebase + 100);
         SystemModel.CPU.setAddrRegister(1, codebase + 108);
         SystemModel.MEM.poke(codebase + 98, 0x0099, Size.Word);

@@ -11,7 +11,7 @@ public class BCLRTest extends BasicSetup {
     }
 
     public void testDyn() {
-        setInstruction(0x0380);    //bclr d1,d0
+        setInstructionAtPC(0x0380);    //bclr d1,d0
         SystemModel.CPU.setDataRegister(0, 0);
         SystemModel.CPU.setDataRegister(1, 4);
         SystemModel.CPU.setCCR((byte) 0);

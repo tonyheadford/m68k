@@ -11,7 +11,7 @@ public class SUBTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x9001);    //sub.b d1, d0
+        setInstructionAtPC(0x9001);    //sub.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0x78);
 
@@ -28,7 +28,7 @@ public class SUBTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x9041);    //sub.w d1, d0
+        setInstructionAtPC(0x9041);    //sub.w d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0xaa78);
 
@@ -45,7 +45,7 @@ public class SUBTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x9081);    //sub.l d1, d0
+        setInstructionAtPC(0x9081);    //sub.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0x87654321);
 

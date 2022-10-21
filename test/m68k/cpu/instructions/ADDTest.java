@@ -1,6 +1,7 @@
 package m68k.cpu.instructions;
 
 import junit.framework.TestCase;
+import m68k.TestCpuUtil;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
@@ -43,10 +44,10 @@ public class ADDTest extends TestCase {
     }
 
     public void testADD() {
-        cpu.setPC(4);
         cpu.setDataRegisterByte(0, 0x40);
         cpu.setDataRegisterByte(1, 0x80);
-        bus.writeWord(4, 0xd001);    // add.b d1,d0
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 4, 0xd001); // add.b d1,d0
+
         int ticks = cpu.execute();
         assertEquals(6, cpu.getPC());
         assertEquals(0xc0, cpu.getDataRegisterByte(0));
@@ -58,10 +59,11 @@ public class ADDTest extends TestCase {
         assertTrue(cpu.isFlagSet(Cpu.N_FLAG));
         assertFalse(cpu.isFlagSet(Cpu.X_FLAG));
 
-        cpu.setPC(4);
+
         cpu.setDataRegisterWord(0, 0x8000);
         cpu.setDataRegisterWord(1, 0x8500);
-        bus.writeWord(4, 0xd041);    // add.w d1,d0
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 4, 0xd041); // add.w d1,d0
+
         ticks = cpu.execute();
         assertEquals(6, cpu.getPC());
         assertEquals("d0", 0x0500, cpu.getDataRegisterWord(0));
@@ -73,11 +75,10 @@ public class ADDTest extends TestCase {
         assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
         assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
 
-
-        cpu.setPC(4);
         cpu.setDataRegisterLong(0, 0xfffffffc);
         cpu.setDataRegisterLong(1, 0x04);
-        bus.writeWord(4, 0xd081);    // add.l d1,d0
+        TestCpuUtil.writeCodeAndSetPc(cpu, bus, 4, 0xd081); // add.l d1,d0
+
         ticks = cpu.execute();
         assertEquals(6, cpu.getPC());
         assertEquals("d0", 0, cpu.getDataRegisterLong(0));

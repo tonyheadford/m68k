@@ -12,7 +12,7 @@ public class CMPATest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xb0c9);    //cmp.w a1,a0
+        setInstructionAtPC(0xb0c9);    //cmp.w a1,a0
         SystemModel.CPU.setAddrRegister(0, 0x87654321);
         SystemModel.CPU.setAddrRegister(1, 0x87658321);
 
@@ -28,7 +28,7 @@ public class CMPATest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xb1c9);    //cmp.l a1, a0
+        setInstructionAtPC(0xb1c9);    //cmp.l a1, a0
         SystemModel.CPU.setAddrRegister(0, 0x87654321);
         SystemModel.CPU.setAddrRegister(1, 0xcc00cc00);
 
@@ -44,7 +44,7 @@ public class CMPATest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0xb2d0);    //cmp (a0),d0
+        setInstructionAtPC(0xb2d0);    //cmp (a0),d0
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.CPU.setAddrRegister(1, 0x87654321);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);

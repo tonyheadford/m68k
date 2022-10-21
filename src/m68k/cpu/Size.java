@@ -33,7 +33,7 @@ public enum Size
 	private final int msb;
 	private final int mask;
 
-	private Size(int num_bytes, String ext, int msb)
+	Size(int num_bytes, String ext, int msb)
 	{
 		byte_count = num_bytes;
 		this.ext = ext;

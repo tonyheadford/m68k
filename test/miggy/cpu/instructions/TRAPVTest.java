@@ -11,7 +11,7 @@ public class TRAPVTest extends BasicSetup {
     }
 
     public void testTrap() {
-        setInstruction(0x4e76);    //trapv
+        setInstructionAtPC(0x4e76);    //trapv
 
         SystemModel.CPU.setCCR((byte) 2);    //set v
         int time = SystemModel.CPU.execute();
@@ -27,7 +27,7 @@ public class TRAPVTest extends BasicSetup {
     }
 
     public void testNoTrap() {
-        setInstruction(0x4e76);    //trapv
+        setInstructionAtPC(0x4e76);    //trapv
 
         SystemModel.CPU.setCCR((byte) 0);    //v not set
         int time = SystemModel.CPU.execute();

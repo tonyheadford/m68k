@@ -12,7 +12,7 @@ public class ADDXTest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0xd101);    //addx.b d1, d0
+        setInstructionAtPC(0xd101);    //addx.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0x78);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -28,7 +28,7 @@ public class ADDXTest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0xd141);    //addx.w d1, d0
+        setInstructionAtPC(0xd141);    //addx.w d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0xaa78);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -44,7 +44,7 @@ public class ADDXTest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0xd181);    //addx.l d1, d0
+        setInstructionAtPC(0xd181);    //addx.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
         SystemModel.CPU.setDataRegister(1, 0xf8765432);
         SystemModel.CPU.setCCR((byte) 0x1f);
@@ -63,7 +63,7 @@ public class ADDXTest extends BasicSetup {
         int addr = 0x800;
         int a2Exp = addr - 2;
         SystemModel.MEM.poke(a2Exp, 0x12345678, Size.Long);
-        setInstruction(0xd50a);   //addx.b  -(A2), -(A2)
+        setInstructionAtPC(0xd50a);   //addx.b  -(A2), -(A2)
         SystemModel.CPU.setAddrRegister(2, addr);
         SystemModel.CPU.setCCR((byte) 0x1f);
 
@@ -77,7 +77,7 @@ public class ADDXTest extends BasicSetup {
         int addr = 0x800;
         int anExp = addr - 4;
         SystemModel.MEM.poke(anExp, 0x12345678, Size.Long);
-        setInstruction(0xdb4d);   //addx.w  -(A5), -(A5)
+        setInstructionAtPC(0xdb4d);   //addx.w  -(A5), -(A5)
         SystemModel.CPU.setAddrRegister(5, addr);
         SystemModel.CPU.setCCR((byte) 0x1f);
 
@@ -92,7 +92,7 @@ public class ADDXTest extends BasicSetup {
         int anExp = addr - 8;
         SystemModel.MEM.poke(anExp, 0x12345678, Size.Long);
         SystemModel.MEM.poke(anExp + 4, 0x87654321, Size.Long);
-        setInstruction(0xdd8e);   //addx.l  -(A6), -(A6)
+        setInstructionAtPC(0xdd8e);   //addx.l  -(A6), -(A6)
         SystemModel.CPU.setAddrRegister(6, addr);
         SystemModel.CPU.setCCR((byte) 0x1f);
 

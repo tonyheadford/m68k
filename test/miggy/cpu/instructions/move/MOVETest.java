@@ -12,7 +12,7 @@ public class MOVETest extends BasicSetup {
     }
 
     public void testByte() {
-        setInstruction(0x1001);    //move.b d1, d0
+        setInstructionAtPC(0x1001);    //move.b d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 
@@ -29,7 +29,7 @@ public class MOVETest extends BasicSetup {
     }
 
     public void testWord() {
-        setInstruction(0x3001);    //move.w d1, d0
+        setInstructionAtPC(0x3001);    //move.w d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 
@@ -46,7 +46,7 @@ public class MOVETest extends BasicSetup {
     }
 
     public void testLong() {
-        setInstruction(0x2001);    //move.l d1, d0
+        setInstructionAtPC(0x2001);    //move.l d1, d0
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setDataRegister(1, 0xc7c7c7c7);
 
@@ -63,7 +63,7 @@ public class MOVETest extends BasicSetup {
     }
 
     public void testMem() {
-        setInstruction(0x22d8);    //move.l (a0)+,(a1)+
+        setInstructionAtPC(0x22d8);    //move.l (a0)+,(a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.CPU.setAddrRegister(1, 40);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);

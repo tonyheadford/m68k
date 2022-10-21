@@ -1,7 +1,8 @@
 package m68k.cpu.instructions;
 
-import org.junit.Assert;
 import miggy.BasicSetup;
+import miggy.SystemModel;
+import org.junit.Assert;
 
 import static miggy.SystemModel.CPU;
 import static miggy.SystemModel.CpuFlag;
@@ -121,7 +122,8 @@ public class BitShiftTest extends BasicSetup {
 
     private void testOpcodeInternal(int opcode, int flagState, int d0, boolean isRox) {
         setUp();
-        setInstruction(opcode);
+        setInstructionAtPC(opcode);
+        SystemModel.CPU.setPC(codebase);
         CPU.setDataRegister(destReg, d0);
         CPU.setDataRegister(srcReg, shiftOrRotateValue);
         CPU.setCCR(0);
