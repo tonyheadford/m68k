@@ -4,4 +4,6 @@ bin/*
 lib/*
 docs/*
 .idea/*
+out/*
+.gradle/*
 

@@ -1,0 +1,112 @@
+plugins {
+    id 'java'
+}
+
+def dateString = getDate()
+group 'com.fbdev.helios'
+
+assert JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17) : "Java 17 or newer is required"
+
+//version dateString
+version dateString + '-SNAPSHOT'
+def jarNameHead = rootProject.name + "-" + version
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs= ["res"]
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.tinylog:tinylog-api:2.5.0'
+    implementation 'org.tinylog:tinylog-impl:2.5.0'
+    implementation 'org.tinylog:slf4j-tinylog:2.5.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.0'
+    testImplementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'com.google.code.gson:gson:2.9.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+def static getDate() {
+    String date = new Date().format('yyMMdd')
+    date.substring(0,2) + "." + date.substring(2)
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    dependsOn "compileJava"
+    manifest {
+        attributes 'Implementation-Title': 'headford68k',
+                'Implementation-Version': archiveVersion
+    }
+    duplicatesStrategy= "exclude"
+    getArchiveBaseName().set(project.name + "-all")//+ version
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        ["README.md", "LICENSE.md"]
+    }
+    with jar
+    doLast {
+        println("Creating fatJar: "+ getArchiveFileName().getOrNull() +" in folder: " + destinationDirectory.getOrNull())
+    }
+}
+
+task copyRes {
+    copy {
+        from {
+            ["README.md", "LICENSE.md"]
+        }
+        into "$buildDir/packageDir"
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'headford68k',
+                'Implementation-Version': archiveVersion,
+                'Class-Path': configurations.compileClasspath.collect { "lib/" + it.getName() }.join(' ')
+    }
+    archivesBaseName = rootProject.name
+    destinationDirectory = file("$buildDir/packageDir")
+    into 'res', {
+        from 'res'
+    }
+    doLast {
+        println("Creating jar: " + getArchiveFileName().getOrNull() + " in folder: " + getDestinationDirectory().getOrNull())
+    }
+}
+
+
+task packageDistribution(type: Zip) {
+    dependsOn "test", "jar", "copyRes"
+    archiveFileName = jarNameHead + ".zip"
+    destinationDirectory = file("$buildDir/dist")
+
+    from "$buildDir/packageDir"
+    doLast {
+        println("Creating package: " + getArchiveFileName().getOrNull() +
+                ", folder: " + getDestinationDirectory().getOrNull())
+    }
+}
+
+test {
+    testLogging {
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                println "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            }
+        }
+    }
+}
