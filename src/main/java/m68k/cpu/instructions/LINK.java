@@ -62,8 +62,15 @@ public class LINK implements InstructionHandler
 		//signed displacement
 		int displacement = cpu.fetchPCWordSigned();
 
+		//quirk with "link A7, #val", decrement and then push
+		//see https://www.atari-forum.com/viewtopic.php?t=34730&start=25
+		int addrRegVal = cpu.getAddrRegisterLong(sreg);
+		if(sreg == 7){
+			addrRegVal -= 4;
+		}
+
 		//push the address reg
-		cpu.pushLong(cpu.getAddrRegisterLong(sreg));
+		cpu.pushLong(addrRegVal);
 
 		//copy the stack pointer to the address reg
 		int sp = cpu.getAddrRegisterLong(7);
