@@ -7,6 +7,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -29,6 +30,7 @@ public class SR_CCR_MaskingTest {
         cpu.setAddrRegisterLong(7, stack);
     }
 
+    @Test
     public void testCCR(){
         cpu.setCCRegister(0xFF);
         TestCpuUtil.assertEquals(0xFF & Cpu.CCR_MASK, cpu.getCCRegister());
@@ -36,7 +38,7 @@ public class SR_CCR_MaskingTest {
         TestCpuUtil.assertEquals(0x27FF & Cpu.CCR_MASK, cpu.getCCRegister());
     }
 
-    public void testSR(){
+    @Test public void testSR(){
         cpu.setSR(0xFFFF);
         TestCpuUtil.assertEquals(0xFFFF & Cpu.SR_MASK, cpu.getSR());
         cpu.setCCRegister(0xFF);

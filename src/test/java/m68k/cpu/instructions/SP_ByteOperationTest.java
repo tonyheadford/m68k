@@ -7,6 +7,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,6 +31,7 @@ public class SP_ByteOperationTest {
         cpu.setAddrRegisterLong(7, stack);
     }
 
+    @Test
     public void testSpBytePostInc() {
         int opcode = 0xbf08; //cmpm.b  (A0)+, (A7)+
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
@@ -42,7 +44,7 @@ public class SP_ByteOperationTest {
         assertEquals(spExp, cpu.getAddrRegisterLong(7));
     }
 
-    public void testSpBytePreDec() {
+    @Test public void testSpBytePreDec() {
         int opcode = 0xdf08; //addx.b  -(A0), -(A7)
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(7, stack);

@@ -6,6 +6,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +47,7 @@ public class ADDTest {
         cpu.setAddrRegisterLong(7, 0x200);
     }
 
+    @Test
     public void testADD() {
         cpu.setDataRegisterByte(0, 0x40);
         cpu.setDataRegisterByte(1, 0x80);

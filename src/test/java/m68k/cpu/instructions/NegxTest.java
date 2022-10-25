@@ -6,6 +6,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,11 +34,12 @@ public class NegxTest {
         cpu.setAddrRegisterLong(7, stack);
     }
 
+    @Test
     public void testNegx01() {
         negxInternal();
     }
 
-    public void testNegx02() {
+    @Test public void testNegx02() {
         cpu.setFlags(Cpu.Z_FLAG);
         negxInternal();
     }

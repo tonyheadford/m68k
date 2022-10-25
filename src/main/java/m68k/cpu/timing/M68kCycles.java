@@ -21,7 +21,7 @@ public class M68kCycles {
      * The agreement seems to be that yacht.txt is more accurate than MC68000UM.pdf
      * https://github.com/larsbrinkhoff/m68k-microcode/blob/master/doc/Yacht.txt
      */
-    private static final String fileLoc = "src/main/resources/";
+    private static final String fileLoc = "res";
     private static final String fileName = "m68kCycles.dat";
 
     static {

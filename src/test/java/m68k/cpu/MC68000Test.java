@@ -5,6 +5,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +45,7 @@ public class MC68000Test {
         cpu.reset();
     }
 
+    @Test
     public void testDataRegs() {
         for (int r = 0; r < 7; r++) {
             cpu.setDataRegisterByte(r, 0xaa);
@@ -76,7 +78,7 @@ public class MC68000Test {
         }
     }
 
-    public void testAddrRegs() {
+    @Test public void testAddrRegs() {
         for (int r = 0; r < 7; r++) {
             cpu.setAddrRegisterByte(r, 0xaa);
             assertEquals(0xaa, cpu.getAddrRegisterByte(r));
@@ -108,7 +110,7 @@ public class MC68000Test {
         }
     }
 
-    public void testPC() {
+    @Test public void testPC() {
         bus.writeLong(4, 0x12345678);
         cpu.setPC(4);
         int val = cpu.fetchPCLong();
@@ -133,7 +135,7 @@ public class MC68000Test {
         assertEquals(8, cpu.getPC());
     }
 
-    public void testFlags() {
+    @Test public void testFlags() {
         cpu.setSR(0x27ff);
         assertTrue(cpu.isFlagSet(Cpu.C_FLAG));
         assertTrue(cpu.isFlagSet(Cpu.V_FLAG));
@@ -198,7 +200,7 @@ public class MC68000Test {
         assertEquals(0, cpu.getInterruptLevel());
     }
 
-    public void testException() {
+    @Test public void testException() {
         bus.writeLong(0x08, 0x56789);
         bus.writeLong(0x0c, 0x12345);
         bus.writeLong(0x10, 0x23456);

@@ -6,6 +6,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * ${FILE}
@@ -31,6 +32,7 @@ public class TasTest {
 
 
     // 0100 1010 1100 0000
+    @Test
     public void testTasRegOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         bus.writeWord(4, 0x4AC0);    //TAS D0
@@ -42,7 +44,7 @@ public class TasTest {
         TestCpuUtil.assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasRegBroken() {
+    @Test public void testTasRegBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -53,7 +55,7 @@ public class TasTest {
         TestCpuUtil.assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasMemOk() {
+    @Test public void testTasMemOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         int val = 0x20;
         int memAddr = 100;
@@ -68,7 +70,7 @@ public class TasTest {
         TestCpuUtil.assertEquals(val | 0x80, res);
     }
 
-    public void testTasMemBroken() {
+    @Test public void testTasMemBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AD0);    //TAS (A0)
         bus.writeByte(100, 0x20);

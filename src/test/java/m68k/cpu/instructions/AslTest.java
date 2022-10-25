@@ -7,6 +7,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +36,7 @@ public class AslTest {
         cpu.setAddrRegisterLong(7, stack);
     }
 
+    @Test
     public void testAsl() {
         int opcode = 0xe1d5; //asl.w (a5)
         int memLoc = 0x10;
@@ -52,7 +54,7 @@ public class AslTest {
         assertTrue(cpu.isFlagSet(Cpu.X_FLAG));
     }
 
-    public void testLsl() {
+    @Test public void testLsl() {
         int opcode = 0xE3D5; //lsl.w (a5)
         int memLoc = 0x10;
         int data = 0xFF_8000;

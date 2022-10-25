@@ -6,6 +6,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import m68k.util.TestCpuUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static m68k.util.TestCpuUtil.assertEquals;
 
@@ -29,6 +30,7 @@ public class MOVETest {
         cpu.setAddrRegisterLong(7, stack);
     }
 
+    @Test
     public void testMoveByteA7() {
         int opcode = 0x1F0F; //move.b	a7,-(a7)
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
@@ -39,7 +41,7 @@ public class MOVETest {
         TestCpuUtil.assertNotEquals("Check for a7", stack & 0xFF, cpu.readMemoryByte(stack - 1));
     }
 
-    public void testMoveByte() {
+    @Test public void testMoveByte() {
         int opcode = 0x1108; //move.b	a0,-(a0)
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(0, stack);
@@ -47,7 +49,7 @@ public class MOVETest {
         assertEquals("Check for a0", stack & 0xFF, cpu.readMemoryByte(stack - 1));
     }
 
-    public void testMoveWord() {
+    @Test public void testMoveWord() {
         int opcode = 0x3108; //move.w	a0,-(a0)
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(0, stack);
@@ -55,7 +57,7 @@ public class MOVETest {
         assertEquals("Check for a0", stack, cpu.readMemoryWord(stack - 2));
     }
 
-    public void testMoveLong() {
+    @Test public void testMoveLong() {
         int opcode = 0x22c9; //move.l	a1,(a1)+
         TestCpuUtil.writeCodeAndSetPc(cpu, bus, 0, opcode);
         cpu.setAddrRegisterLong(1, stack);

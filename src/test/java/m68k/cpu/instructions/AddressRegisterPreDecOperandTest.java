@@ -6,6 +6,7 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -51,6 +52,7 @@ public class AddressRegisterPreDecOperandTest {
         wordWrites.clear();
     }
 
+    @Test
     public void testLswWrittenFirst_MOVE() {
         int lsw = 0x2222;
         int msw = 0x1111;
@@ -84,7 +86,7 @@ public class AddressRegisterPreDecOperandTest {
         assertEquals(msw, second.getValue().intValue());
     }
 
-    public void testLswWrittenFirst_MOVEM() {
+    @Test public void testLswWrittenFirst_MOVEM() {
         int lsw = 0x2222;
         int msw = 0x1111;
         int value = msw << 16 | lsw;

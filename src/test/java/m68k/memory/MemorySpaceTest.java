@@ -1,6 +1,8 @@
 package m68k.memory;
 
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 //
 */
 public class MemorySpaceTest {
+
+    @Test
     public void testCreate() {
         AddressSpace bus = new MemorySpace(4);
         assertEquals(4096, bus.size());
@@ -36,6 +40,7 @@ public class MemorySpaceTest {
         assertEquals(32768, bus.size());
     }
 
+    @Test
     public void testMemory() {
         AddressSpace bus = new MemorySpace(1);
         bus.writeByte(4, 0x55);

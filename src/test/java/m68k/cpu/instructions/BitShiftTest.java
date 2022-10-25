@@ -2,6 +2,7 @@ package m68k.cpu.instructions;
 
 import miggy.BasicSetup;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static m68k.util.TestCpuUtil.*;
 import static miggy.SystemModel.CPU;
@@ -29,13 +30,14 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testLsl() {
+    @Test public void testLsl() {
         int opcode = 0xE328; //lsl.b d1,d0
         int d0 = 0x07654321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
+    @Test
     public void testLsr() {
         int opcode = 0xE228; //lsr.b d1,d0
         int d0 = 0x07654321;
@@ -50,14 +52,14 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testAsl() {
+    @Test public void testAsl() {
         int opcode = 0xE320; //asl.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
-    public void testAsr() {
+    @Test public void testAsr() {
         int opcode = 0xE220; //asr.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
@@ -71,14 +73,14 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testRol() {
+    @Test public void testRol() {
         int opcode = 0xE338; //rol.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
-    public void testRor() {
+    @Test public void testRor() {
         int opcode = 0xE238; //ror.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
@@ -92,14 +94,14 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - set to the value of the extend bit
      */
-    public void testRoxl() {
+    @Test public void testRoxl() {
         int opcode = 0xE330; //roxl.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0, true);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0, true);
     }
 
-    public void testRoxr() {
+    @Test public void testRoxr() {
         int opcode = 0xE230; //roxr.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0, true);

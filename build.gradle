@@ -73,8 +73,9 @@ task copyRes {
 }
 
 jar {
+    dependsOn "copyRes"
     manifest {
-        attributes 'Implementation-Title': 'headford68k',
+        attributes 'Implementation-Title': rootProject.name,
                 'Implementation-Version': archiveVersion,
                 'Class-Path': configurations.compileClasspath.collect { "lib/" + it.getName() }.join(' ')
     }
@@ -85,6 +86,26 @@ jar {
     }
     doLast {
         println("Creating jar: " + getArchiveFileName().getOrNull() + " in folder: " + getDestinationDirectory().getOrNull())
+    }
+}
+
+task jarWithSources(type: Jar) {
+    duplicatesStrategy("exclude")
+    from sourceSets.main.allSource
+    manifest {
+        attributes 'Implementation-Title': rootProject.name,
+                'Implementation-Version': archiveVersion,
+                'Class-Path': configurations.compileClasspath.collect { "lib/" + it.getName() }.join(' ')
+    }
+    getArchiveFileName().set(rootProject.name + "-binsrc-${project.version}.jar")
+    destinationDirectory = file("$buildDir/packageDir")
+    from {
+        ["README.md", "LICENSE.md"]
+    }
+    with jar
+    doLast {
+        println("Creating jar with sources: " + getArchiveFileName().getOrNull() +
+                " in folder: " + getDestinationDirectory().getOrNull())
     }
 }
 

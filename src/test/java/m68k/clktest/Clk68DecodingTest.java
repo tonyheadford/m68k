@@ -57,6 +57,7 @@ public class Clk68DecodingTest {
             String head68 = getDisasmSafe(inst, opcode);
             boolean isClkNone = "NONE".equalsIgnoreCase(clk);
             boolean illegal = isClkNone && "????".equals(head68);
+//            System.out.println(Integer.toHexString(opcode));
             if (illegal) {
                 continue;
             }
@@ -81,7 +82,7 @@ public class Clk68DecodingTest {
             DisassembledInstruction dis = inst.disassemble(0, opcode);
             disasm = dis.instruction.toUpperCase();
         } catch (Exception e){
-            if(verbose) System.err.println(Integer.toHexString(opcode) + "," + inst + "," + "ERROR");
+            if(verbose) System.err.println(Integer.toHexString(opcode) + "," + inst.getClass().getSimpleName() + "," + "ERROR");
             disasm = "ERROR: " + inst;
         }
         return disasm;
