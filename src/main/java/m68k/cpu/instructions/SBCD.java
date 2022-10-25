@@ -100,8 +100,8 @@ public class SBCD implements InstructionHandler
 		int sreg = (opcode & 0x07);
 		int dreg = (opcode >> 9) & 0x07;
 		cpu.decrementAddrRegister(sreg, 1);
-		cpu.decrementAddrRegister(dreg, 1);
 		int s = cpu.readMemoryByte(cpu.getAddrRegisterLong(sreg));
+		cpu.decrementAddrRegister(dreg, 1);
 		int d = cpu.readMemoryByte(cpu.getAddrRegisterLong(dreg));
 
 		int result = calc(cpu, s, d);
