@@ -90,6 +90,7 @@ jar {
 }
 
 task jarWithSources(type: Jar) {
+    dependsOn "test"
     duplicatesStrategy("exclude")
     from sourceSets.main.allSource
     manifest {
@@ -98,7 +99,7 @@ task jarWithSources(type: Jar) {
                 'Class-Path': configurations.compileClasspath.collect { "lib/" + it.getName() }.join(' ')
     }
     getArchiveFileName().set(rootProject.name + "-binsrc-${project.version}.jar")
-    destinationDirectory = file("$buildDir/packageDir")
+    destinationDirectory = file("$buildDir/dist")
     from {
         ["README.md", "LICENSE.md"]
     }
@@ -106,19 +107,6 @@ task jarWithSources(type: Jar) {
     doLast {
         println("Creating jar with sources: " + getArchiveFileName().getOrNull() +
                 " in folder: " + getDestinationDirectory().getOrNull())
-    }
-}
-
-
-task packageDistribution(type: Zip) {
-    dependsOn "test", "jar", "copyRes"
-    archiveFileName = jarNameHead + ".zip"
-    destinationDirectory = file("$buildDir/dist")
-
-    from "$buildDir/packageDir"
-    doLast {
-        println("Creating package: " + getArchiveFileName().getOrNull() +
-                ", folder: " + getDestinationDirectory().getOrNull())
     }
 }
 
