@@ -54,4 +54,22 @@ public class ABCDTest extends BasicSetup {
         assertFalse("Check V 2", SystemModel.CPU.isSet(CpuFlag.V));
         assertFalse("Check C 2", SystemModel.CPU.isSet(CpuFlag.C));
     }
+
+    public void testMem2() {
+        setInstruction(0xc108);    //abcd -(a0),-(a0)
+        SystemModel.CPU.setAddrRegister(0, codebase + 100);
+        SystemModel.MEM.poke(codebase + 98, 0x2316, Size.Word);
+
+        SystemModel.CPU.setCCR((byte) 0);
+
+        int time = SystemModel.CPU.execute();
+
+        //23+16 = 39
+        assertEquals("Check result", 0x3916, SystemModel.MEM.peek(codebase + 98, Size.Word));
+        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
+        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
+        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
+        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
+        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+    }
 }
