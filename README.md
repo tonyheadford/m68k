@@ -2,7 +2,7 @@
 m68k
 ====
 
-This is my Motorola 680x0 emulator written in Java. This is the designed to be a modular cpu component for my Java based Amiga emulator project *Miggy*.  This project was originally hosted on Google code but I'm now moving it to GitHub.
+A Motorola 680x0 emulator written in Java.
 
 Emulation
 ---------
