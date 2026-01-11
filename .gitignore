@@ -1,7 +1,9 @@
 *.iws
+*.iml
+*.ipr
+target/
 build/*
 bin/*
 lib/*
 docs/*
 .idea/*
-
