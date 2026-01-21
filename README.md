@@ -36,4 +36,4 @@ The code is released under the Open Source BSD License.
 
 Contributors
 ------------
-Many thanks to [Wolfgang Lenerz](https://github.com/flockermush) and @fedex81 for their contributions.
+Many thanks to [Wolfgang Lenerz](https://github.com/flockermush), @fedex81 and @jazz64 for their contributions.
