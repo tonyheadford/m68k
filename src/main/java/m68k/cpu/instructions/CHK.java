@@ -1,6 +1,10 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.rules.AddressingMode;
+import m68k.cpu.rules.AddressingMode.DataRegisterDirect;
+
+import static m68k.cpu.rules.AddressingMode.dataModes;
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -26,82 +30,61 @@ import m68k.cpu.*;
 //
 */
 
-public class CHK implements InstructionHandler
-{
-	protected final Cpu cpu;
+public class CHK implements InstructionHandler {
+    protected final Cpu cpu;
 
-	public CHK(Cpu cpu)
-	{
-		this.cpu = cpu;
-	}
+    public CHK(Cpu cpu) {
+        this.cpu = cpu;
+    }
 
-	public void register(InstructionSet is)
-	{
-		int base = 0x4180;
-		Instruction i = new Instruction() {
-			public int execute(int opcode)
-			{
-				return chk(opcode);
-			}
-			public DisassembledInstruction disassemble(int address, int opcode)
-			{
-				return disassembleOp(address, opcode, Size.Word);
-			}
-		};
+    public void register(InstructionSet is) {
+        int base = 0x4180;
+        Instruction i = new Instruction() {
+            public int execute(int opcode) {
+                return chk(opcode);
+            }
 
-		for(int ea_mode = 0; ea_mode < 8; ea_mode++)
-		{
-			if(ea_mode == 1)
-				continue;
+            public DisassembledInstruction disassemble(int address, int opcode) {
+                return disassembleOp(address, opcode, Size.Word);
+            }
+        };
 
-			for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-			{
-				if(ea_mode == 7 && ea_reg > 4)
-					break;
+        for (AddressingMode ea : dataModes()) {
+            for (DataRegisterDirect reg : DataRegisterDirect.all()) {
+                is.addInstruction(base + (reg.getRegister() << 9) + (ea.getMode() << 3) + ea.getRegister(), i);
+            }
+        }
+    }
 
-				for(int r = 0; r < 8; r++)
-				{
-					is.addInstruction(base + (r << 9) + (ea_mode << 3) + ea_reg, i);
-				}
-			}
-		}
-	}
+    protected final int chk(int opcode) {
+        int reg = (opcode >> 9) & 0x07;
+        int dval = cpu.getDataRegisterWordSigned(reg);
 
-	protected final int chk(int opcode)
-	{
-		int reg = (opcode >> 9) & 0x07;
-		int dval = cpu.getDataRegisterWordSigned(reg);
+        Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
+        int sval = op.getWord();
+        boolean raiseException = false;
 
-		Operand op = cpu.resolveSrcEA((opcode >> 3) & 0x07, (opcode & 0x07), Size.Word);
-		int sval = op.getWord();
-		boolean raiseException = false;
+        if (dval < 0) {
+            cpu.setFlags(Cpu.N_FLAG);
+            raiseException = true;
+        } else if (dval > sval) {
+            cpu.clrFlags(Cpu.N_FLAG);
+            raiseException = true;
+        }
 
-		if(dval < 0)
-		{
-			cpu.setFlags(Cpu.N_FLAG);
-			raiseException = true;
-		}
-		else if(dval > sval)
-		{
-			cpu.clrFlags(Cpu.N_FLAG);
-			raiseException = true;
-		}
+        if (raiseException) {
+            // CHK exception is vector 6
+            cpu.raiseException(6);
+            return 40 + op.getTiming();
+        }
 
-		if(raiseException)
-		{
-			// CHK exception is vector 6
-			cpu.raiseException(6);
-			return 40 + op.getTiming();
-		}
+        return 10 + op.getTiming();
+    }
 
-		return 10 + op.getTiming();
-	}
+    protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz) {
+        DisassembledOperand dst = new DisassembledOperand("d" + (opcode >> 9 & 0x07));
+        DisassembledOperand src = cpu.disassembleSrcEA(address + 2, opcode >> 3 & 0x07, opcode & 0x07, sz);
 
-	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
-	{
-		DisassembledOperand src = new DisassembledOperand("d" + ((opcode >> 9) & 0x07));
-		DisassembledOperand dst = cpu.disassembleDstEA(address + 2, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
-
-		return new DisassembledInstruction(address, opcode, "chk", src, dst);
-	}
+        return new DisassembledInstruction(address, opcode, "chk", src, dst);
+    }
 }
